@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, HelpCircle } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
 import { Button, Input, Card, Alert } from '../../components/ui'
 
@@ -39,7 +39,7 @@ function Login() {
     <Card className="p-8">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
-        <p className="text-gray-600 mt-1">Sign in to continue your learning journey</p>
+        <p className="text-gray-600 mt-1">Sign in to access your courses</p>
       </div>
 
       {error && (
@@ -55,50 +55,53 @@ function Login() {
           name="email"
           value={formData.email}
           onChange={handleChange}
-          placeholder="you@example.com"
+          placeholder="you@school.edu.rw"
           required
           disabled={isSubmitting}
         />
 
-        <div className="relative">
-          <Input
-            label="Password"
-            type={showPassword ? 'text' : 'password'}
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Enter your password"
-            required
-            disabled={isSubmitting}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
-            tabIndex={-1}
-          >
-            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-          </button>
+        <div>
+          <div className="relative">
+            <Input
+              label="Password"
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Enter your password"
+              required
+              disabled={isSubmitting}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600"
+              tabIndex={-1}
+            >
+              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
 
-        <Button
-          type="submit"
-          variant="primary"
-          size="lg"
-          fullWidth
-          loading={isSubmitting}
-          disabled={isSubmitting || !formData.email || !formData.password}
-        >
+        <div className="text-right">
+          <Link to="/forgot-password" className="text-sm text-primary-600 hover:text-primary-700">
+            Forgot password?
+          </Link>
+        </div>
+
+        <Button type="submit" fullWidth loading={isSubmitting}>
           Sign In
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-gray-600">
-        Don't have an account?{' '}
-        <Link to="/register" className="text-primary-600 font-medium hover:text-primary-700">
-          Sign up as a public student
-        </Link>
-      </p>
+      <div className="mt-6 pt-6 border-t border-gray-200">
+        <div className="flex items-start gap-2 text-sm text-gray-600">
+          <HelpCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-400" />
+          <p>
+            Don't have an account? Contact your school administrator to get access.
+          </p>
+        </div>
+      </div>
     </Card>
   )
 }

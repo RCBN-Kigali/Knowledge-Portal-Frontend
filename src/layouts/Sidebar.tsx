@@ -1,11 +1,11 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import type { ComponentType } from 'react'
 import {
   LayoutDashboard, BookOpen, Users, School, Settings, BarChart3,
-  FileText, CheckSquare, GraduationCap, UserPlus, Bell, BookMarked, X
+  FileText, CheckSquare, GraduationCap, UserPlus, Bell, BookMarked, X, LogOut
 } from 'lucide-react'
 import clsx from 'clsx'
-import { Avatar, Dropdown } from '../components/ui'
+import { Avatar, Button } from '../components/ui'
 import { useAuth } from '../hooks/useAuth'
 import usePermissions from '../hooks/usePermissions'
 import type { UserRole } from '../types'
@@ -25,16 +25,16 @@ interface NavSection {
 const navigation: NavSection[] = [
   {
     items: [
-      { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard, roles: ['super_admin', 'school_admin', 'school_teacher', 'school_student', 'independent_teacher', 'public_student'] },
+      { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard, roles: ['super_admin', 'school_admin', 'school_teacher', 'school_student', 'independent_teacher'] },
     ],
   },
   {
     title: 'Learning',
     items: [
-      { label: 'Browse Public Courses', to: '/student/public-courses', icon: BookOpen, roles: ['school_student', 'public_student'] },
-      { label: 'School Courses', to: '/student/school-courses', icon: BookMarked, roles: ['school_student'] },
-      { label: 'My Enrollments', to: '/student/enrollments', icon: GraduationCap, roles: ['school_student', 'public_student'] },
-      { label: 'My Progress', to: '/student/progress', icon: BarChart3, roles: ['school_student', 'public_student'] },
+      { label: 'Browse Courses', to: '/student/courses', icon: BookOpen, roles: ['school_student'] },
+      { label: 'My Enrollments', to: '/student/enrollments', icon: GraduationCap, roles: ['school_student'] },
+      { label: 'My Progress', to: '/student/progress', icon: BarChart3, roles: ['school_student'] },
+      { label: 'Announcements', to: '/student/announcements', icon: Bell, roles: ['school_student'] },
     ],
   },
   {
@@ -44,7 +44,6 @@ const navigation: NavSection[] = [
       { label: 'Create Course', to: '/teacher/courses/new', icon: FileText, roles: ['school_teacher', 'independent_teacher'] },
       { label: 'My Students', to: '/teacher/students', icon: Users, roles: ['school_teacher', 'independent_teacher'] },
       { label: 'Submissions', to: '/teacher/submissions', icon: CheckSquare, roles: ['school_teacher', 'independent_teacher'] },
-      { label: 'Enrollment Requests', to: '/teacher/enrollments', icon: UserPlus, roles: ['independent_teacher'] },
     ],
   },
   {
@@ -60,9 +59,6 @@ const navigation: NavSection[] = [
     items: [
       { label: 'All Schools', to: '/superadmin/schools', icon: School, roles: ['super_admin'] },
       { label: 'All Users', to: '/superadmin/users', icon: Users, roles: ['super_admin'] },
-      { label: 'Independent Teachers', to: '/superadmin/teachers', icon: GraduationCap, roles: ['super_admin'] },
-      { label: 'Course Approvals', to: '/superadmin/courses', icon: CheckSquare, roles: ['super_admin'] },
-      { label: 'Announcements', to: '/superadmin/announcements', icon: Bell, roles: ['super_admin'] },
       { label: 'Analytics', to: '/superadmin/analytics', icon: BarChart3, roles: ['super_admin'] },
     ],
   },
@@ -76,6 +72,7 @@ interface SidebarProps {
 function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { user, logout } = useAuth()
   const { hasRole } = usePermissions()
+  const navigate = useNavigate()
 
   const filteredNavigation = navigation
     .map((section) => ({
@@ -83,6 +80,11 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
       items: section.items.filter((item) => hasRole(item.roles)),
     }))
     .filter((section) => section.items.length > 0)
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/login')
+  }
 
   return (
     <>
@@ -151,33 +153,29 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
           ))}
         </nav>
 
-        {/* User profile */}
-        <div className="p-4 border-t border-gray-200">
-          <Dropdown>
-            <Dropdown.Trigger className="w-full justify-start">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <Avatar name={user?.name || 'User'} size="sm" />
-                <div className="flex-1 min-w-0 text-left">
-                  <p className="text-sm font-medium text-gray-900 truncate">
-                    {user?.name || 'User'}
-                  </p>
-                  <p className="text-xs text-gray-500 truncate capitalize">
-                    {user?.role.replace(/_/g, ' ')}
-                  </p>
-                </div>
-              </div>
-            </Dropdown.Trigger>
-            <Dropdown.Menu align="right" className="w-56">
-              <NavLink to="/profile">
-                <Dropdown.Item>Profile</Dropdown.Item>
-              </NavLink>
-              <NavLink to="/settings">
-                <Dropdown.Item>Settings</Dropdown.Item>
-              </NavLink>
-              <Dropdown.Divider />
-              <Dropdown.Item onClick={logout}>Logout</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+        {/* User profile & Logout */}
+        <div className="p-4 border-t border-gray-200 space-y-3">
+          <div className="flex items-center gap-3">
+            <Avatar name={user?.name || 'User'} size="sm" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {user?.name || 'User'}
+              </p>
+              <p className="text-xs text-gray-500 truncate">
+                {user?.schoolName || user?.role.replace(/_/g, ' ')}
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            fullWidth
+            onClick={handleLogout}
+            leftIcon={<LogOut className="w-4 h-4" />}
+            className="justify-start text-gray-600 hover:text-danger-600 hover:bg-danger-50"
+          >
+            Logout
+          </Button>
         </div>
       </aside>
     </>

@@ -156,7 +156,7 @@ function Dashboard() {
     case 'independent_teacher':
       return <TeacherDashboard user={user} />
     case 'school_student':
-    case 'public_student':
+    case 'school_student':
     default:
       return <StudentDashboard user={user} />
   }

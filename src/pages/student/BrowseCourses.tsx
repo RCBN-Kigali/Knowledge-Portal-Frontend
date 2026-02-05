@@ -1,8 +1,9 @@
 import { useState, useCallback } from 'react'
-import { Search, LogIn } from 'lucide-react'
-import { SearchBar, Card, Badge, EmptyState, Skeleton, Pagination } from '../../components/ui'
+import { Search } from 'lucide-react'
+import { SearchBar, Tabs, Skeleton, Card, EmptyState, Pagination } from '../../components/ui'
 import CourseCard from '../../features/student/components/CourseCard'
-import { usePublicCourses } from '../../features/student/hooks/usePublicCourses'
+import { useCourses, useEnroll } from '../../features/student/hooks/useCourses'
+import { useEnrollments } from '../../features/student/hooks/useEnrollments'
 import type { CourseCategory, DifficultyLevel } from '../../types'
 
 const categories: { value: CourseCategory | ''; label: string }[] = [
@@ -15,7 +16,6 @@ const categories: { value: CourseCategory | ''; label: string }[] = [
   { value: 'social_studies', label: 'Social Studies' },
   { value: 'health', label: 'Health' },
   { value: 'agriculture', label: 'Agriculture' },
-  { value: 'other', label: 'Other' },
 ]
 
 const difficulties: { value: DifficultyLevel | ''; label: string }[] = [
@@ -25,13 +25,15 @@ const difficulties: { value: DifficultyLevel | ''; label: string }[] = [
   { value: 'advanced', label: 'Advanced' },
 ]
 
-function PublicCatalog() {
+function BrowseCourses() {
+  const [activeTab, setActiveTab] = useState<'all' | 'school' | 'public'>('all')
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState<CourseCategory | ''>('')
   const [difficulty, setDifficulty] = useState<DifficultyLevel | ''>('')
   const [page, setPage] = useState(1)
 
-  const { data, isLoading } = usePublicCourses({
+  const { data, isLoading } = useCourses({
+    tab: activeTab,
     search: search || undefined,
     category: category || undefined,
     difficulty: difficulty || undefined,
@@ -39,25 +41,38 @@ function PublicCatalog() {
     perPage: 12,
   })
 
+  const { data: enrollments } = useEnrollments()
+  const enrolledCourseIds = new Set(enrollments?.map(e => e.courseId) || [])
+
   const courses = data?.data ?? []
   const pagination = data?.pagination
+
+  const tabs = [
+    { id: 'all', label: 'All Courses' },
+    { id: 'school', label: 'My School' },
+    { id: 'public', label: 'Public' },
+  ]
 
   const handleSearch = useCallback((value: string) => {
     setSearch(value)
     setPage(1)
   }, [])
 
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab as 'all' | 'school' | 'public')
+    setPage(1)
+  }
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Browse Courses</h1>
-        <p className="text-gray-600">
-          Explore available courses. Login with your school account to enroll.
-        </p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Browse Courses</h1>
+        <p className="text-gray-500">Discover courses and start learning</p>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <Tabs tabs={tabs} activeTab={activeTab} onChange={handleTabChange} />
+
+      <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <SearchBar
             placeholder="Search courses..."
@@ -82,7 +97,6 @@ function PublicCatalog() {
         </select>
       </div>
 
-      {/* Results */}
       {isLoading ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map(i => <Skeleton key={i} variant="card" />)}
@@ -92,25 +106,28 @@ function PublicCatalog() {
           <EmptyState
             icon={Search}
             title="No courses found"
-            description={search ? 'Try adjusting your search or filters' : 'Check back soon for new courses'}
+            description={search ? 'Try a different search term' : activeTab === 'school' ? 'No courses from your school yet' : 'No courses available'}
           />
         </Card>
       ) : (
         <>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {courses.map(course => (
-              <CourseCard key={course.id} course={course} showLoginBadge />
+              <CourseCard
+                key={course.id}
+                course={course}
+                linkPrefix="/student/courses"
+                enrollmentStatus={enrolledCourseIds.has(course.id) ? 'enrolled' : 'not_enrolled'}
+              />
             ))}
           </div>
           {pagination && pagination.totalPages > 1 && (
-            <div className="mt-8">
-              <Pagination
-                currentPage={pagination.page}
-                totalPages={pagination.totalPages}
-                onPageChange={setPage}
-                totalItems={pagination.total}
-              />
-            </div>
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.totalPages}
+              onPageChange={setPage}
+              totalItems={pagination.total}
+            />
           )}
         </>
       )}
@@ -118,4 +135,4 @@ function PublicCatalog() {
   )
 }
 
-export default PublicCatalog
+export default BrowseCourses

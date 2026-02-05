@@ -20,11 +20,10 @@ export function usePermissions() {
   const isSchoolTeacher = user?.role === 'school_teacher'
   const isSchoolStudent = user?.role === 'school_student'
   const isIndependentTeacher = user?.role === 'independent_teacher'
-  const isPublicStudent = user?.role === 'public_student'
 
   const isAnyAdmin = isSuperAdmin || isSchoolAdmin
   const isAnyTeacher = isSchoolTeacher || isIndependentTeacher
-  const isAnyStudent = isSchoolStudent || isPublicStudent
+  const isAnyStudent = isSchoolStudent
   const isSchoolMember = isSchoolAdmin || isSchoolTeacher || isSchoolStudent
 
   const belongsToSchool = (schoolId: string): boolean => {
@@ -41,7 +40,6 @@ export function usePermissions() {
     isSchoolTeacher,
     isSchoolStudent,
     isIndependentTeacher,
-    isPublicStudent,
     isAnyAdmin,
     isAnyTeacher,
     isAnyStudent,
