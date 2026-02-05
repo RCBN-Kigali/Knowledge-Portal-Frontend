@@ -54,7 +54,7 @@ function Landing() {
                 </Button>
               </Link>
               <Link to="/courses">
-                <Button size="lg" variant="secondary" className="border-white text-white hover:bg-white/10">
+                <Button size="lg" variant="secondary" className="bg-transparent border-white text-white hover:bg-white/10">
                   Browse Courses
                 </Button>
               </Link>
