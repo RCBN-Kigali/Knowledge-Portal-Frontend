@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Users, MoreVertical, Edit, Eye, Trash2, Send, BarChart3 } from 'lucide-react'
+import { Users, MoreVertical, Edit, Trash2, Send, BarChart3 } from 'lucide-react'
 import Card from '../../../components/ui/Card'
 import Badge from '../../../components/ui/Badge'
 import Dropdown from '../../../components/ui/Dropdown'
@@ -12,6 +12,8 @@ export interface TeacherCourseCardProps {
 }
 
 function CourseCard({ course, onDelete }: TeacherCourseCardProps) {
+  const isApproved = course.status === 'approved'
+  
   return (
     <Card className="p-4">
       <div className="flex items-start justify-between gap-3">
@@ -51,11 +53,13 @@ function CourseCard({ course, onDelete }: TeacherCourseCardProps) {
                 <Edit className="w-4 h-4" /> Edit
               </Link>
             </Dropdown.Item>
-            <Dropdown.Item>
-              <Link to={`/teacher/courses/${course.id}/analytics`} className="flex items-center gap-2 w-full">
-                <BarChart3 className="w-4 h-4" /> Analytics
-              </Link>
-            </Dropdown.Item>
+            {isApproved && (
+              <Dropdown.Item>
+                <Link to={`/teacher/courses/${course.id}/analytics`} className="flex items-center gap-2 w-full">
+                  <BarChart3 className="w-4 h-4" /> Analytics
+                </Link>
+              </Dropdown.Item>
+            )}
             {course.status === 'draft' && (
               <Dropdown.Item>
                 <button className="flex items-center gap-2 w-full text-left">
