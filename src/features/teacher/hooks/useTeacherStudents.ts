@@ -1,29 +1,133 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../../hooks/useAuth'
-import type { User } from '../../../types'
+import type { User, Course } from '../../../types'
 
-interface TeacherStudent extends User {
-  enrolledCourses: number
-  averageProgress: number
+// Types for enrolled students (school teacher)
+export interface EnrolledStudent {
+  id: string
+  name: string
+  email: string
+  avatarUrl?: string
+  enrolledCourses: { id: string; title: string; progress: number }[]
+  overallProgress: number
+  lastActiveAt: string
 }
 
-const MOCK_STUDENTS: TeacherStudent[] = [
-  { id: 's1', email: 'jean@student.edu', name: 'Jean Baptiste', role: 'school_student', schoolId: 'school-1', schoolName: 'Paysannat Main', permissions: [], enrolledCourses: 3, averageProgress: 65 },
-  { id: 's2', email: 'marie@student.edu', name: 'Marie Claire', role: 'school_student', schoolId: 'school-1', schoolName: 'Paysannat Main', permissions: [], enrolledCourses: 2, averageProgress: 80 },
-  { id: 's3', email: 'paul@student.edu', name: 'Paul Kagame', role: 'school_student', schoolId: 'school-1', schoolName: 'Paysannat Main', permissions: [], enrolledCourses: 4, averageProgress: 45 },
+// Types for non-enrolled students (school teacher)
+export interface SchoolStudent {
+  id: string
+  name: string
+  email: string
+  avatarUrl?: string
+}
+
+// Types for independent teacher students
+export interface IndependentTeacherStudent {
+  id: string
+  name: string
+  email: string
+  avatarUrl?: string
+  schoolName: string
+  courseName: string
+  courseId: string
+  progress: number
+  lastActiveAt: string
+}
+
+// Mock data for enrolled students
+const MOCK_ENROLLED_STUDENTS: EnrolledStudent[] = [
+  {
+    id: 's1',
+    name: 'Jean Baptiste',
+    email: 'jean@student.edu',
+    enrolledCourses: [
+      { id: 'c1', title: 'Introduction to Mathematics', progress: 75 },
+      { id: 'c2', title: 'Basic Science', progress: 45 },
+    ],
+    overallProgress: 60,
+    lastActiveAt: '2024-01-15T10:30:00Z',
+  },
+  {
+    id: 's2',
+    name: 'Marie Claire',
+    email: 'marie@student.edu',
+    enrolledCourses: [
+      { id: 'c1', title: 'Introduction to Mathematics', progress: 90 },
+    ],
+    overallProgress: 90,
+    lastActiveAt: '2024-01-14T14:20:00Z',
+  },
+  {
+    id: 's3',
+    name: 'Paul Mugisha',
+    email: 'paul@student.edu',
+    enrolledCourses: [
+      { id: 'c1', title: 'Introduction to Mathematics', progress: 30 },
+      { id: 'c2', title: 'Basic Science', progress: 55 },
+      { id: 'c3', title: 'English Language', progress: 80 },
+    ],
+    overallProgress: 55,
+    lastActiveAt: '2024-01-13T09:15:00Z',
+  },
 ]
 
-export function useTeacherStudents(search?: string) {
+// Mock data for non-enrolled students
+const MOCK_NON_ENROLLED_STUDENTS: SchoolStudent[] = [
+  { id: 's4', name: 'Alice Uwimana', email: 'alice@student.edu' },
+  { id: 's5', name: 'Eric Habimana', email: 'eric@student.edu' },
+  { id: 's6', name: 'Grace Mukamana', email: 'grace@student.edu' },
+  { id: 's7', name: 'David Niyonzima', email: 'david@student.edu' },
+]
+
+// Mock data for independent teacher students
+const MOCK_INDEPENDENT_STUDENTS: IndependentTeacherStudent[] = [
+  {
+    id: 'is1',
+    name: 'Jean Baptiste',
+    email: 'jean@school1.edu',
+    schoolName: 'Paysannat Main Campus',
+    courseName: 'Advanced Agriculture',
+    courseId: 'c1',
+    progress: 65,
+    lastActiveAt: '2024-01-15T10:30:00Z',
+  },
+  {
+    id: 'is2',
+    name: 'Marie Claire',
+    email: 'marie@school2.edu',
+    schoolName: 'Paysannat Eastern',
+    courseName: 'Advanced Agriculture',
+    courseId: 'c1',
+    progress: 80,
+    lastActiveAt: '2024-01-14T14:20:00Z',
+  },
+  {
+    id: 'is3',
+    name: 'Paul Kagame',
+    email: 'paul@school3.edu',
+    schoolName: 'Green Hills Academy',
+    courseName: 'Sustainable Farming',
+    courseId: 'c2',
+    progress: 45,
+    lastActiveAt: '2024-01-13T09:15:00Z',
+  },
+]
+
+// Hook for enrolled students (school teacher)
+export function useEnrolledStudents(search?: string) {
   const { user } = useAuth()
   
   return useQuery({
-    queryKey: ['teacherStudents', user?.schoolId, search],
-    queryFn: async (): Promise<TeacherStudent[]> => {
+    queryKey: ['enrolledStudents', user?.schoolId, search],
+    queryFn: async (): Promise<EnrolledStudent[]> => {
       await new Promise(resolve => setTimeout(resolve, 300))
-      let students = [...MOCK_STUDENTS]
+      let students = [...MOCK_ENROLLED_STUDENTS]
       if (search) {
         const s = search.toLowerCase()
-        students = students.filter(st => st.name.toLowerCase().includes(s) || st.email.toLowerCase().includes(s))
+        students = students.filter(st => 
+          st.name.toLowerCase().includes(s) || 
+          st.email.toLowerCase().includes(s)
+        )
       }
       return students
     },
@@ -31,16 +135,78 @@ export function useTeacherStudents(search?: string) {
   })
 }
 
-export function useEnrollStudent() {
+// Hook for non-enrolled students (school teacher)
+export function useNonEnrolledStudents(search?: string) {
+  const { user } = useAuth()
+  
+  return useQuery({
+    queryKey: ['nonEnrolledStudents', user?.schoolId, search],
+    queryFn: async (): Promise<SchoolStudent[]> => {
+      await new Promise(resolve => setTimeout(resolve, 300))
+      let students = [...MOCK_NON_ENROLLED_STUDENTS]
+      if (search) {
+        const s = search.toLowerCase()
+        students = students.filter(st => 
+          st.name.toLowerCase().includes(s) || 
+          st.email.toLowerCase().includes(s)
+        )
+      }
+      return students
+    },
+    enabled: user?.role === 'school_teacher',
+  })
+}
+
+// Hook for independent teacher students
+export function useIndependentTeacherStudents(search?: string) {
+  const { user } = useAuth()
+  
+  return useQuery({
+    queryKey: ['independentStudents', user?.id, search],
+    queryFn: async (): Promise<IndependentTeacherStudent[]> => {
+      await new Promise(resolve => setTimeout(resolve, 300))
+      let students = [...MOCK_INDEPENDENT_STUDENTS]
+      if (search) {
+        const s = search.toLowerCase()
+        students = students.filter(st => 
+          st.name.toLowerCase().includes(s) || 
+          st.email.toLowerCase().includes(s) ||
+          st.schoolName.toLowerCase().includes(s)
+        )
+      }
+      return students
+    },
+    enabled: user?.role === 'independent_teacher',
+  })
+}
+
+// Mutation to enroll students in courses
+export function useEnrollStudents() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ studentId, courseId }: { studentId: string; courseId: string }) => {
+    mutationFn: async ({ studentIds, courseIds }: { studentIds: string[]; courseIds: string[] }) => {
       await new Promise(resolve => setTimeout(resolve, 500))
-      return { studentId, courseId }
+      // In real app, this would call the API
+      return { studentIds, courseIds, enrolledCount: studentIds.length * courseIds.length }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['teacherStudents'] })
-      queryClient.invalidateQueries({ queryKey: ['teacherCourses'] })
+      queryClient.invalidateQueries({ queryKey: ['enrolledStudents'] })
+      queryClient.invalidateQueries({ queryKey: ['nonEnrolledStudents'] })
     },
   })
+}
+
+// Legacy export for backwards compatibility
+export function useTeacherStudents(search?: string) {
+  return useEnrolledStudents(search)
+}
+
+export function useEnrollStudent() {
+  const enrollStudents = useEnrollStudents()
+  return {
+    ...enrollStudents,
+    mutateAsync: async ({ studentId, courseId }: { studentId: string; courseId: string }) => {
+      return enrollStudents.mutateAsync({ studentIds: [studentId], courseIds: [courseId] })
+    },
+  }
 }
