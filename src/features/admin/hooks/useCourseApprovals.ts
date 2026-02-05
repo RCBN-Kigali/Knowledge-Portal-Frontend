@@ -26,7 +26,7 @@ const MOCK_PENDING_COURSES: PendingCourse[] = [
     category: 'mathematics',
     difficulty: 'advanced',
     visibility: 'private',
-    teacher: { id: 't1', name: 'Alice Uwimana', schoolId: 'school-1', schoolName: 'Paysannat Main Campus', type: 'school' },
+    teacher: { id: 't1', name: 'Alice Uwimana', schoolId: 'school-1', schoolName: 'Paysannat A', type: 'school' },
     moduleCount: 4,
     lessonCount: 12,
     submittedAt: '2024-01-15T10:30:00Z',
@@ -52,7 +52,7 @@ const MOCK_PENDING_COURSES: PendingCourse[] = [
     category: 'languages',
     difficulty: 'beginner',
     visibility: 'public',
-    teacher: { id: 't3', name: 'Eric Habimana', schoolId: 'school-1', schoolName: 'Paysannat Main Campus', type: 'school' },
+    teacher: { id: 't3', name: 'Eric Habimana', schoolId: 'school-1', schoolName: 'Paysannat A', type: 'school' },
     moduleCount: 5,
     lessonCount: 15,
     submittedAt: '2024-01-13T09:15:00Z',
@@ -68,7 +68,7 @@ const MOCK_APPROVED_COURSES: PendingCourse[] = [
     category: 'science',
     difficulty: 'beginner',
     visibility: 'private',
-    teacher: { id: 't1', name: 'Alice Uwimana', schoolId: 'school-1', schoolName: 'Paysannat Main Campus', type: 'school' },
+    teacher: { id: 't1', name: 'Alice Uwimana', schoolId: 'school-1', schoolName: 'Paysannat A', type: 'school' },
     moduleCount: 3,
     lessonCount: 9,
     submittedAt: '2024-01-10T10:00:00Z',
@@ -84,7 +84,7 @@ const MOCK_REJECTED_COURSES: PendingCourse[] = [
     category: 'mathematics',
     difficulty: 'beginner',
     visibility: 'private',
-    teacher: { id: 't4', name: 'David Niyonzima', schoolId: 'school-2', schoolName: 'Paysannat Eastern', type: 'school' },
+    teacher: { id: 't4', name: 'David Niyonzima', schoolId: 'school-2', schoolName: 'Paysannat B', type: 'school' },
     moduleCount: 2,
     lessonCount: 4,
     submittedAt: '2024-01-08T11:00:00Z',
@@ -109,7 +109,7 @@ export function usePendingCourses(status: CourseStatus = 'pending') {
       else if (status === 'approved') courses = [...MOCK_APPROVED_COURSES]
       else if (status === 'rejected') courses = [...MOCK_REJECTED_COURSES]
       
-      // School admin only sees their school's courses
+      // School admin only sees their school courses
       if (user?.role === 'school_admin') {
         courses = courses.filter(c => c.teacher.schoolId === user.schoolId)
       }
@@ -132,7 +132,7 @@ export function useCourseForReview(courseId: string | undefined) {
       const allCourses = [...MOCK_PENDING_COURSES, ...MOCK_APPROVED_COURSES, ...MOCK_REJECTED_COURSES]
       return allCourses.find(c => c.id === courseId) || null
     },
-    enabled: !!courseId,
+    enabled: \!\!courseId,
   })
 }
 

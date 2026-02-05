@@ -2,10 +2,10 @@ import { BookOpen, Users, School, Target, MapPin, Mail, Phone, Eye } from 'lucid
 import { Card } from '../../components/ui'
 
 const schools = [
-  { name: 'Paysannat L School - Main Campus', location: 'Kigali, Rwanda', description: 'The flagship campus serving over 8,000 students with comprehensive programs in science, arts, and technology.', students: 8000 },
-  { name: 'Paysannat L School - Eastern Branch', location: 'Rwamagana, Rwanda', description: 'Focused on agricultural sciences and rural development, serving 5,000+ students.', students: 5000 },
-  { name: 'Paysannat L School - Southern Branch', location: 'Huye, Rwanda', description: 'Specializing in languages and social studies, supporting 4,000 students.', students: 4000 },
-  { name: 'Paysannat L School - Northern Branch', location: 'Musanze, Rwanda', description: 'Dedicated to environmental studies and health sciences, with 3,000+ students.', students: 3000 },
+  { name: 'Paysannat A', location: 'Rwamagana, Rwanda', description: 'Campus A serving over 8,000 students with comprehensive programs in science, arts, and technology.', students: 8000 },
+  { name: 'Paysannat B', location: 'Rwamagana, Rwanda', description: 'Campus B focused on agricultural sciences and rural development, serving 5,000+ students.', students: 5000 },
+  { name: 'Paysannat C', location: 'Rwamagana, Rwanda', description: 'Campus C specializing in languages and social studies, supporting 4,000 students.', students: 4000 },
+  { name: 'Paysannat D', location: 'Rwamagana, Rwanda', description: 'Campus D dedicated to environmental studies and health sciences, with 3,000+ students.', students: 3000 },
 ]
 
 const values = [
@@ -25,8 +25,8 @@ function About() {
         </div>
         <h1 className="text-4xl font-bold text-gray-900 mb-4">About Paysannat L School</h1>
         <p className="text-lg text-gray-600">
-          We are a network of 4 rural schools committed to delivering quality education to over
-          20,000 students across our region. Knowledge Portal is our digital learning platform,
+          We are a network of 4 campuses in Rwamagana committed to delivering quality education to over
+          20,000 students. Knowledge Portal is our digital learning platform,
           connecting students with experienced teachers from both our schools and independent
           educators.
         </p>
@@ -47,7 +47,7 @@ function About() {
 
       {/* Our Schools */}
       <div className="mb-16">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Our 4 Partner Schools</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Our 4 Campuses</h2>
         <div className="grid md:grid-cols-2 gap-6">
           {schools.map(school => (
             <Card key={school.name} className="p-6">
@@ -83,7 +83,7 @@ function About() {
           </div>
           <div className="text-center">
             <p className="text-3xl font-bold text-primary-600">4</p>
-            <p className="text-gray-600 mt-1">Schools</p>
+            <p className="text-gray-600 mt-1">Campuses</p>
           </div>
           <div className="text-center">
             <p className="text-3xl font-bold text-primary-600">100+</p>
@@ -98,7 +98,7 @@ function About() {
         <div className="space-y-3 text-gray-600">
           <p className="flex items-center justify-center gap-2"><Mail className="w-5 h-5 text-primary-600" /> info@paysannat.edu.rw</p>
           <p className="flex items-center justify-center gap-2"><Phone className="w-5 h-5 text-primary-600" /> +250 788 000 000</p>
-          <p className="flex items-center justify-center gap-2"><MapPin className="w-5 h-5 text-primary-600" /> Kigali, Rwanda</p>
+          <p className="flex items-center justify-center gap-2"><MapPin className="w-5 h-5 text-primary-600" /> Rwamagana, Rwanda</p>
         </div>
       </div>
     </div>

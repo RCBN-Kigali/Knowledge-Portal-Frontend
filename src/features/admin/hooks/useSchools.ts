@@ -36,9 +36,9 @@ export interface SchoolDetail extends School {
 const MOCK_SCHOOLS: School[] = [
   {
     id: 'school-1',
-    name: 'Paysannat Main Campus',
-    location: 'Kigali, Rwanda',
-    description: 'The main campus of Paysannat L School network',
+    name: 'Paysannat A',
+    location: 'Rwamagana, Rwanda',
+    description: 'Paysannat L School - Campus A',
     adminId: 'admin-1',
     adminName: 'Jean Bosco Habimana',
     adminEmail: 'jbosco@paysannat.edu.rw',
@@ -51,9 +51,9 @@ const MOCK_SCHOOLS: School[] = [
   },
   {
     id: 'school-2',
-    name: 'Paysannat Eastern',
-    location: 'Eastern Province, Rwanda',
-    description: 'Eastern branch of Paysannat L School',
+    name: 'Paysannat B',
+    location: 'Rwamagana, Rwanda',
+    description: 'Paysannat L School - Campus B',
     adminId: 'admin-2',
     adminName: 'Marie Rose Uwimana',
     adminEmail: 'mrose@paysannat.edu.rw',
@@ -66,12 +66,12 @@ const MOCK_SCHOOLS: School[] = [
   },
   {
     id: 'school-3',
-    name: 'Green Hills Academy',
-    location: 'Northern Province, Rwanda',
-    description: 'Partner school in the Northern region',
+    name: 'Paysannat C',
+    location: 'Rwamagana, Rwanda',
+    description: 'Paysannat L School - Campus C',
     adminId: 'admin-3',
     adminName: 'Patrick Mugabo',
-    adminEmail: 'pmugabo@greenhills.edu.rw',
+    adminEmail: 'pmugabo@paysannat.edu.rw',
     adminPhone: '+250 788 345 678',
     studentCount: 280,
     teacherCount: 12,
@@ -81,12 +81,12 @@ const MOCK_SCHOOLS: School[] = [
   },
   {
     id: 'school-4',
-    name: 'Rwanda Technical College',
-    location: 'Southern Province, Rwanda',
-    description: 'Technical and vocational training partner',
+    name: 'Paysannat D',
+    location: 'Rwamagana, Rwanda',
+    description: 'Paysannat L School - Campus D',
     adminId: 'admin-4',
     adminName: 'Alice Uwimana',
-    adminEmail: 'auwimana@rtc.edu.rw',
+    adminEmail: 'auwimana@paysannat.edu.rw',
     adminPhone: '+250 788 456 789',
     studentCount: 200,
     teacherCount: 8,
@@ -124,8 +124,8 @@ const MOCK_SCHOOL_DETAILS: Record<string, SchoolDetail> = {
   'school-3': {
     ...MOCK_SCHOOLS[2],
     teachers: [
-      { id: 't6', name: 'David Nsengiyumva', email: 'dnsengiyumva@greenhills.edu.rw', courseCount: 3, status: 'active' },
-      { id: 't7', name: 'Jacqueline Uwera', email: 'juwera@greenhills.edu.rw', courseCount: 2, status: 'inactive' },
+      { id: 't6', name: 'David Nsengiyumva', email: 'dnsengiyumva@paysannat.edu.rw', courseCount: 3, status: 'active' },
+      { id: 't7', name: 'Jacqueline Uwera', email: 'juwera@paysannat.edu.rw', courseCount: 2, status: 'inactive' },
     ],
     recentCourses: [
       { id: 'c6', title: 'Business Fundamentals', teacherName: 'David Nsengiyumva', status: 'approved' },
@@ -134,7 +134,7 @@ const MOCK_SCHOOL_DETAILS: Record<string, SchoolDetail> = {
   'school-4': {
     ...MOCK_SCHOOLS[3],
     teachers: [
-      { id: 't8', name: 'Samuel Mugisha', email: 'smugisha@rtc.edu.rw', courseCount: 4, status: 'active' },
+      { id: 't8', name: 'Samuel Mugisha', email: 'smugisha@paysannat.edu.rw', courseCount: 4, status: 'active' },
     ],
     recentCourses: [
       { id: 'c7', title: 'Technical Drawing', teacherName: 'Samuel Mugisha', status: 'approved' },

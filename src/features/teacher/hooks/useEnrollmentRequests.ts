@@ -3,7 +3,7 @@ import { useAuth } from '../../../hooks/useAuth'
 import type { EnrollmentRequest } from '../../../types'
 
 const MOCK_REQUESTS: EnrollmentRequest[] = [
-  { id: 'er1', studentId: 's10', studentName: 'Alice Mukamana', studentEmail: 'alice@school.edu', studentSchool: 'Paysannat Eastern', courseId: 'tc-1', courseName: 'Introduction to Mathematics', requestedAt: '2024-03-08T10:00:00Z', status: 'pending' },
+  { id: 'er1', studentId: 's10', studentName: 'Alice Mukamana', studentEmail: 'alice@school.edu', studentSchool: 'Paysannat B', courseId: 'tc-1', courseName: 'Introduction to Mathematics', requestedAt: '2024-03-08T10:00:00Z', status: 'pending' },
   { id: 'er2', studentId: 's11', studentName: 'Bob Habimana', studentEmail: 'bob@school.edu', studentSchool: 'Paysannat Southern', courseId: 'tc-1', courseName: 'Introduction to Mathematics', requestedAt: '2024-03-09T14:30:00Z', status: 'pending' },
   { id: 'er3', studentId: 's12', studentName: 'Claire Uwase', studentEmail: 'claire@school.edu', studentSchool: 'Paysannat Northern', courseId: 'tc-2', courseName: 'Advanced Physics', requestedAt: '2024-03-10T09:00:00Z', status: 'pending' },
 ]

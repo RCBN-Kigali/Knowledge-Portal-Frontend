@@ -5,10 +5,10 @@ import CourseCard from '../../features/student/components/CourseCard'
 import { usePublicCourses } from '../../features/student/hooks/usePublicCourses'
 
 const schools = [
-  { name: 'Paysannat Main Campus', location: 'Kigali' },
-  { name: 'Paysannat Eastern', location: 'Rwamagana' },
-  { name: 'Paysannat Southern', location: 'Huye' },
-  { name: 'Paysannat Northern', location: 'Musanze' },
+  { name: 'Paysannat A', location: 'Rwamagana' },
+  { name: 'Paysannat B', location: 'Rwamagana' },
+  { name: 'Paysannat C', location: 'Rwamagana' },
+  { name: 'Paysannat D', location: 'Rwamagana' },
 ]
 
 function Landing() {

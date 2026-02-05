@@ -35,13 +35,13 @@ export interface AdminUsersResponse {
 }
 
 const MOCK_USERS: AdminUser[] = [
-  { id: 'u1', name: 'Jean Baptiste', email: 'jean@student.edu', role: 'school_student', schoolId: 'school-1', schoolName: 'Paysannat Main Campus', status: 'active', createdAt: '2024-01-15' },
-  { id: 'u2', name: 'Marie Claire', email: 'marie@student.edu', role: 'school_student', schoolId: 'school-1', schoolName: 'Paysannat Main Campus', status: 'active', createdAt: '2024-01-14' },
-  { id: 'u3', name: 'Paul Mugisha', email: 'paul@student.edu', role: 'school_student', schoolId: 'school-1', schoolName: 'Paysannat Main Campus', status: 'inactive', createdAt: '2024-01-13' },
-  { id: 'u4', name: 'Alice Uwimana', email: 'alice@teacher.edu', role: 'school_teacher', schoolId: 'school-1', schoolName: 'Paysannat Main Campus', status: 'active', createdAt: '2024-01-10' },
-  { id: 'u5', name: 'Eric Habimana', email: 'eric@teacher.edu', role: 'school_teacher', schoolId: 'school-1', schoolName: 'Paysannat Main Campus', status: 'active', createdAt: '2024-01-08' },
-  { id: 'u6', name: 'Grace Mukamana', email: 'grace@student.edu', role: 'school_student', schoolId: 'school-2', schoolName: 'Paysannat Eastern', status: 'active', createdAt: '2024-01-12' },
-  { id: 'u7', name: 'David Niyonzima', email: 'david@teacher.edu', role: 'school_teacher', schoolId: 'school-2', schoolName: 'Paysannat Eastern', status: 'active', createdAt: '2024-01-05' },
+  { id: 'u1', name: 'Jean Baptiste', email: 'jean@student.edu', role: 'school_student', schoolId: 'school-1', schoolName: 'Paysannat A', status: 'active', createdAt: '2024-01-15' },
+  { id: 'u2', name: 'Marie Claire', email: 'marie@student.edu', role: 'school_student', schoolId: 'school-1', schoolName: 'Paysannat A', status: 'active', createdAt: '2024-01-14' },
+  { id: 'u3', name: 'Paul Mugisha', email: 'paul@student.edu', role: 'school_student', schoolId: 'school-1', schoolName: 'Paysannat A', status: 'inactive', createdAt: '2024-01-13' },
+  { id: 'u4', name: 'Alice Uwimana', email: 'alice@teacher.edu', role: 'school_teacher', schoolId: 'school-1', schoolName: 'Paysannat A', status: 'active', createdAt: '2024-01-10' },
+  { id: 'u5', name: 'Eric Habimana', email: 'eric@teacher.edu', role: 'school_teacher', schoolId: 'school-1', schoolName: 'Paysannat A', status: 'active', createdAt: '2024-01-08' },
+  { id: 'u6', name: 'Grace Mukamana', email: 'grace@student.edu', role: 'school_student', schoolId: 'school-2', schoolName: 'Paysannat B', status: 'active', createdAt: '2024-01-12' },
+  { id: 'u7', name: 'David Niyonzima', email: 'david@teacher.edu', role: 'school_teacher', schoolId: 'school-2', schoolName: 'Paysannat B', status: 'active', createdAt: '2024-01-05' },
   { id: 'u8', name: 'Dr. Mukamana', email: 'dr.mukamana@independent.edu', role: 'independent_teacher', schoolId: null, status: 'active', createdAt: '2024-01-01' },
 ]
 
@@ -56,10 +56,10 @@ export function useAdminUsers(filters: AdminUsersFilters = {}) {
       
       let filtered = [...MOCK_USERS]
       
-      // School admin can only see their school's users
+      // School admin can only see their school users
       if (user?.role === 'school_admin') {
         filtered = filtered.filter(u => u.schoolId === user.schoolId)
-      } else if (schoolId && schoolId !== 'all') {
+      } else if (schoolId && schoolId \!== 'all') {
         filtered = filtered.filter(u => u.schoolId === schoolId)
       }
       
@@ -71,11 +71,11 @@ export function useAdminUsers(filters: AdminUsersFilters = {}) {
         )
       }
       
-      if (role && role !== 'all') {
+      if (role && role \!== 'all') {
         filtered = filtered.filter(u => u.role === role)
       }
       
-      if (status && status !== 'all') {
+      if (status && status \!== 'all') {
         filtered = filtered.filter(u => u.status === status)
       }
       
@@ -107,7 +107,7 @@ export function useCreateUser() {
   return useMutation({
     mutationFn: async (data: CreateUserData): Promise<{ user: AdminUser; tempPassword: string }> => {
       await new Promise(resolve => setTimeout(resolve, 500))
-      const tempPassword = Math.random().toString(36).slice(-8) + 'A1!'
+      const tempPassword = Math.random().toString(36).slice(-8) + 'A1\!'
       const newUser: AdminUser = {
         id: `u-${Date.now()}`,
         name: data.name,
@@ -171,7 +171,7 @@ export function useResetPassword() {
   return useMutation({
     mutationFn: async (userId: string): Promise<{ tempPassword: string }> => {
       await new Promise(resolve => setTimeout(resolve, 300))
-      const tempPassword = Math.random().toString(36).slice(-8) + 'A1!'
+      const tempPassword = Math.random().toString(36).slice(-8) + 'A1\!'
       return { tempPassword }
     },
   })

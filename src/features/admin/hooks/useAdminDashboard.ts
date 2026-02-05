@@ -59,10 +59,10 @@ const MOCK_SUPERADMIN_STATS: SuperAdminDashboardStats = {
   pendingApprovals: 5,
   independentTeachersPending: 2,
   schools: [
-    { id: 'school-1', name: 'Paysannat Main Campus', location: 'Kigali', studentCount: 450, teacherCount: 15, courseCount: 32, adminName: 'Jean Bosco' },
-    { id: 'school-2', name: 'Paysannat Eastern', location: 'Eastern Province', studentCount: 320, teacherCount: 10, courseCount: 24, adminName: 'Marie Rose' },
-    { id: 'school-3', name: 'Green Hills Academy', location: 'Kigali', studentCount: 280, teacherCount: 12, courseCount: 18, adminName: 'Patrick Mugabo' },
-    { id: 'school-4', name: 'Rwanda Technical College', location: 'Northern Province', studentCount: 200, teacherCount: 8, courseCount: 13, adminName: 'Alice Uwimana' },
+    { id: 'school-1', name: 'Paysannat A', location: 'Rwamagana', studentCount: 450, teacherCount: 15, courseCount: 32, adminName: 'Jean Bosco' },
+    { id: 'school-2', name: 'Paysannat B', location: 'Rwamagana', studentCount: 320, teacherCount: 10, courseCount: 24, adminName: 'Marie Rose' },
+    { id: 'school-3', name: 'Paysannat C', location: 'Rwamagana', studentCount: 280, teacherCount: 12, courseCount: 18, adminName: 'Patrick Mugabo' },
+    { id: 'school-4', name: 'Paysannat D', location: 'Rwamagana', studentCount: 200, teacherCount: 8, courseCount: 13, adminName: 'Alice Uwimana' },
   ],
   pendingCourses: [
     { id: 'course-1', title: 'Advanced Sustainable Agriculture', teacherName: 'Dr. Mukamana', teacherType: 'independent' },
@@ -70,9 +70,9 @@ const MOCK_SUPERADMIN_STATS: SuperAdminDashboardStats = {
     { id: 'course-3', title: 'Climate Change Adaptation', teacherName: 'Prof. Nshimiyimana', teacherType: 'independent' },
   ],
   recentRegistrations: [
-    { id: '1', name: 'Jean Baptiste', email: 'jean@student.edu', role: 'school_student', schoolName: 'Paysannat Main Campus', date: '2024-01-15' },
-    { id: '2', name: 'Marie Claire', email: 'marie@teacher.edu', role: 'school_teacher', schoolName: 'Green Hills Academy', date: '2024-01-14' },
-    { id: '3', name: 'Paul Mugisha', email: 'paul@student.edu', role: 'school_student', schoolName: 'Paysannat Eastern', date: '2024-01-13' },
+    { id: '1', name: 'Jean Baptiste', email: 'jean@student.edu', role: 'school_student', schoolName: 'Paysannat A', date: '2024-01-15' },
+    { id: '2', name: 'Marie Claire', email: 'marie@teacher.edu', role: 'school_teacher', schoolName: 'Paysannat C', date: '2024-01-14' },
+    { id: '3', name: 'Paul Mugisha', email: 'paul@student.edu', role: 'school_student', schoolName: 'Paysannat B', date: '2024-01-13' },
   ],
 }
 
