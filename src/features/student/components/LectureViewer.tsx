@@ -29,10 +29,6 @@ function LectureViewer({ lesson, isCompleting, onComplete }: LectureViewerProps)
         />
       )}
 
-      {lesson.content?.images?.map((img, i) => (
-        <img key={i} src={img} alt="" className="rounded-lg max-w-full" loading="lazy" />
-      ))}
-
       {!lesson.isCompleted && (
         <div className="pt-4 border-t border-gray-200">
           <Button

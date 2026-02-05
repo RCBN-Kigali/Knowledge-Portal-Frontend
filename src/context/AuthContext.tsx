@@ -66,7 +66,7 @@ interface AuthContextType {
   isLoading: boolean
   isAuthenticated: boolean
   error: string | null
-  login: (email: string, password: string) => Promise<void>
+  login: (email: string, password: string) => Promise<User>
   register: (email: string, password: string, name: string) => Promise<void>
   logout: () => Promise<void>
   checkAuth: () => Promise<void>
@@ -104,7 +104,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsLoading(false)
   }, [])
 
-  const login = useCallback(async (email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string): Promise<User> => {
     setError(null)
     setIsLoading(true)
     
@@ -121,6 +121,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     
     persistUser(mockUser.user)
     setIsLoading(false)
+    return mockUser.user
   }, [persistUser])
 
   const register = useCallback(async (_email: string, _password: string, _name: string) => {

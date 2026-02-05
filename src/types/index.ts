@@ -104,9 +104,34 @@ export interface Lesson {
 }
 
 export interface LessonContent {
+  // Lecture content
   text?: string
   videoUrl?: string
-  images?: string[]
+  
+  // Quiz content
+  timeLimit?: number
+  passingScore?: number
+  questions?: QuizQuestionItem[]
+  
+  // Assignment content
+  instructions?: string
+  submissionType?: 'file' | 'text' | 'both'
+  totalPoints?: number
+  dueDate?: string
+}
+
+export interface QuizQuestionItem {
+  id: string
+  text: string
+  type: 'multiple_choice' | 'true_false'
+  options: QuizOptionItem[]
+  correctOptionId: string
+  points: number
+}
+
+export interface QuizOptionItem {
+  id: string
+  text: string
 }
 
 export interface Enrollment {
@@ -236,4 +261,76 @@ export interface StudentProgress {
     maxScore: number
     date: string
   }[]
+}
+
+
+// ─── Teacher Types ────────────────────────────────────────────
+
+export type CourseStatus = 'draft' | 'pending' | 'approved' | 'rejected'
+export type CourseVisibility = 'private' | 'public'
+
+export interface TeacherCourse extends Course {
+  status: CourseStatus
+  visibility: CourseVisibility
+  rejectionReason?: string
+  submittedAt?: string
+  reviewedAt?: string
+}
+
+export interface TeacherDashboardData {
+  stats: {
+    totalCourses: number
+    activeStudents: number
+    pendingSubmissions: number
+    pendingEnrollmentRequests?: number
+  }
+  courseCounts: {
+    draft: number
+    pending: number
+    approved: number
+    rejected: number
+  }
+  recentActivity: { message: string; date: string }[]
+}
+
+export interface EnrollmentRequest {
+  id: string
+  studentId: string
+  studentName: string
+  studentEmail: string
+  studentSchool: string
+  courseId: string
+  courseName: string
+  requestedAt: string
+  status: 'pending' | 'approved' | 'rejected'
+}
+
+export interface Submission {
+  id: string
+  assignmentId: string
+  assignmentTitle: string
+  lessonId: string
+  courseId: string
+  courseName: string
+  studentId: string
+  studentName: string
+  studentAvatarUrl?: string
+  text?: string
+  fileUrl?: string
+  fileName?: string
+  submittedAt: string
+  status: 'pending' | 'graded'
+  score?: number
+  maxScore: number
+  feedback?: string
+  gradedAt?: string
+}
+
+export interface CourseAnalytics {
+  enrolledCount: number
+  completionRate: number
+  averageScore: number
+  moduleCompletion: { moduleTitle: string; completionRate: number }[]
+  quizScores: { quizTitle: string; averageScore: number }[]
+  assignmentSubmissionRate: number
 }

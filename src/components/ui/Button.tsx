@@ -10,6 +10,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   loading?: boolean
   fullWidth?: boolean
   leftIcon?: ReactNode
+  rightIcon?: ReactNode
 }
 
 const variantStyles: Record<string, string> = {
@@ -35,6 +36,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
     loading = false,
     fullWidth = false,
     leftIcon,
+    rightIcon,
     className,
     ...props
   },
@@ -65,6 +67,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
         <>
           {leftIcon && <span className="mr-2 flex-shrink-0">{leftIcon}</span>}
           {children}
+          {rightIcon && <span className="ml-2 flex-shrink-0">{rightIcon}</span>}
         </>
       )}
     </button>

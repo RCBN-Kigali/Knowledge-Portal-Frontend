@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import type { ComponentType } from 'react'
 import {
   LayoutDashboard, BookOpen, Users, School, Settings, BarChart3,
-  FileText, CheckSquare, GraduationCap, UserPlus, Bell, BookMarked, X, LogOut
+  FileText, CheckSquare, GraduationCap, Bell, X, LogOut
 } from 'lucide-react'
 import clsx from 'clsx'
 import { Avatar, Button } from '../components/ui'
@@ -25,7 +25,10 @@ interface NavSection {
 const navigation: NavSection[] = [
   {
     items: [
-      { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard, roles: ['super_admin', 'school_admin', 'school_teacher', 'school_student', 'independent_teacher'] },
+      { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard, roles: ['school_student'] },
+      { label: 'Dashboard', to: '/teacher/dashboard', icon: LayoutDashboard, roles: ['school_teacher', 'independent_teacher'] },
+      { label: 'Dashboard', to: '/admin/dashboard', icon: LayoutDashboard, roles: ['school_admin'] },
+      { label: 'Dashboard', to: '/superadmin/dashboard', icon: LayoutDashboard, roles: ['super_admin'] },
     ],
   },
   {
@@ -42,7 +45,7 @@ const navigation: NavSection[] = [
     items: [
       { label: 'My Courses', to: '/teacher/courses', icon: BookOpen, roles: ['school_teacher', 'independent_teacher'] },
       { label: 'Create Course', to: '/teacher/courses/new', icon: FileText, roles: ['school_teacher', 'independent_teacher'] },
-      { label: 'My Students', to: '/teacher/students', icon: Users, roles: ['school_teacher', 'independent_teacher'] },
+      { label: 'Students', to: '/teacher/students', icon: Users, roles: ['school_teacher', 'independent_teacher'] },
       { label: 'Submissions', to: '/teacher/submissions', icon: CheckSquare, roles: ['school_teacher', 'independent_teacher'] },
     ],
   },

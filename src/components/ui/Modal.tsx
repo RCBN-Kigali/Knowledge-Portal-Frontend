@@ -9,7 +9,7 @@ export interface ModalProps {
   onClose: () => void
   title?: string
   children?: ReactNode
-  size?: 'sm' | 'md' | 'lg' | 'xl'
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
   showCloseButton?: boolean
 }
 
@@ -23,6 +23,8 @@ const sizeStyles: Record<string, string> = {
   md: 'max-w-md',
   lg: 'max-w-lg',
   xl: 'max-w-xl',
+  '2xl': 'max-w-2xl',
+  '3xl': 'max-w-3xl',
 }
 
 const FOCUSABLE_SELECTOR =
@@ -101,7 +103,7 @@ function Modal({ isOpen, onClose, title, children, size = 'md', showCloseButton 
         )}
       >
         {(title || showCloseButton) && (
-          <div className="sticky top-0 bg-white px-6 py-4 border-b border-gray-200 flex items-center justify-between rounded-t-xl">
+          <div className="sticky top-0 bg-white px-6 py-4 border-b border-gray-200 flex items-center justify-between rounded-t-xl z-10">
             {title && (
               <h2 id="modal-title" className="text-xl font-semibold text-gray-900">
                 {title}

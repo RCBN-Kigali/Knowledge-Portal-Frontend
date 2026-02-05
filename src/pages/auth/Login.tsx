@@ -3,6 +3,34 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Eye, EyeOff, HelpCircle } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
 import { Button, Input, Card, Alert } from '../../components/ui'
+import type { UserRole } from '../../types'
+
+// Role-based default redirect paths
+const ROLE_REDIRECTS: Record<UserRole, string> = {
+  super_admin: '/superadmin/dashboard',
+  school_admin: '/admin/dashboard',
+  school_teacher: '/teacher/dashboard',
+  independent_teacher: '/teacher/dashboard',
+  school_student: '/dashboard',
+}
+
+// Check if a path is valid for a given role
+function isPathValidForRole(path: string, role: UserRole): boolean {
+  // If no specific path or it's the root, use default
+  if (!path || path === '/') return false
+  
+  // Role-specific path prefixes
+  const rolePathMap: Record<UserRole, string[]> = {
+    super_admin: ['/superadmin'],
+    school_admin: ['/admin'],
+    school_teacher: ['/teacher'],
+    independent_teacher: ['/teacher'],
+    school_student: ['/dashboard', '/student'],
+  }
+  
+  const validPrefixes = rolePathMap[role] || []
+  return validPrefixes.some(prefix => path.startsWith(prefix))
+}
 
 function Login() {
   const navigate = useNavigate()
@@ -13,7 +41,7 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard'
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -21,8 +49,17 @@ function Login() {
     setIsSubmitting(true)
 
     try {
-      await login(formData.email, formData.password)
-      navigate(from, { replace: true })
+      const user = await login(formData.email, formData.password)
+      
+      // Only use 'from' path if it's valid for the user's role
+      // Otherwise, use the role-based default
+      let redirectPath = ROLE_REDIRECTS[user.role] || '/dashboard'
+      
+      if (from && isPathValidForRole(from, user.role)) {
+        redirectPath = from
+      }
+      
+      navigate(redirectPath, { replace: true })
     } catch {
       // Error handled by context
     } finally {

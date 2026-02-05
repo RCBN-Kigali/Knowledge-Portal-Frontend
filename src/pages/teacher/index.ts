@@ -1,0 +1,6 @@
+export { default as TeacherDashboard } from './TeacherDashboard'
+export { default as MyCourses } from './MyCourses'
+export { default as CourseBuilder } from './CourseBuilder'
+export { default as StudentManagement } from './StudentManagement'
+export { default as Submissions } from './Submissions'
+export { default as CourseAnalytics } from './CourseAnalytics'

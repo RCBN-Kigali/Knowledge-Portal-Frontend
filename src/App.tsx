@@ -31,6 +31,14 @@ import LearningInterface from './pages/student/LearningInterface'
 import Progress from './pages/student/Progress'
 import Announcements from './pages/student/Announcements'
 
+// Teacher Pages
+import TeacherDashboard from './pages/teacher/TeacherDashboard'
+import MyCourses from './pages/teacher/MyCourses'
+import CourseBuilder from './pages/teacher/CourseBuilder'
+import StudentManagement from './pages/teacher/StudentManagement'
+import Submissions from './pages/teacher/Submissions'
+import CourseAnalytics from './pages/teacher/CourseAnalytics'
+
 // Error Pages
 import NotFound from './pages/errors/NotFound'
 import Forbidden from './pages/errors/Forbidden'
@@ -57,7 +65,7 @@ function App() {
 
             {/* Protected Routes with AppLayout */}
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-              {/* Dashboard - All authenticated users */}
+              {/* Dashboard - redirects based on role */}
               <Route path="/dashboard" element={
                 <RoleGuard roles={['school_student']}>
                   <StudentDashboard />
@@ -96,10 +104,40 @@ function App() {
                 </RoleGuard>
               } />
 
-              {/* Teacher Routes - Placeholder */}
-              <Route path="/teacher/*" element={
+              {/* Teacher Routes */}
+              <Route path="/teacher/dashboard" element={
                 <RoleGuard roles={['school_teacher', 'independent_teacher']}>
-                  <div className="p-8 text-center text-gray-500">Teacher Dashboard - Coming Soon</div>
+                  <TeacherDashboard />
+                </RoleGuard>
+              } />
+              <Route path="/teacher/courses" element={
+                <RoleGuard roles={['school_teacher', 'independent_teacher']}>
+                  <MyCourses />
+                </RoleGuard>
+              } />
+              <Route path="/teacher/courses/new" element={
+                <RoleGuard roles={['school_teacher', 'independent_teacher']}>
+                  <CourseBuilder />
+                </RoleGuard>
+              } />
+              <Route path="/teacher/courses/:courseId/edit" element={
+                <RoleGuard roles={['school_teacher', 'independent_teacher']}>
+                  <CourseBuilder />
+                </RoleGuard>
+              } />
+              <Route path="/teacher/courses/:courseId/analytics" element={
+                <RoleGuard roles={['school_teacher', 'independent_teacher']}>
+                  <CourseAnalytics />
+                </RoleGuard>
+              } />
+              <Route path="/teacher/students" element={
+                <RoleGuard roles={['school_teacher', 'independent_teacher']}>
+                  <StudentManagement />
+                </RoleGuard>
+              } />
+              <Route path="/teacher/submissions" element={
+                <RoleGuard roles={['school_teacher', 'independent_teacher']}>
+                  <Submissions />
                 </RoleGuard>
               } />
 
