@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { useTeacherCourse, useCreateCourse, useUpdateCourse, useSubmitForReview } from '../../features/teacher/hooks/useTeacherCourses'
 import { useModules, useCreateModule, useUpdateModule, useDeleteModule, useReorderModules } from '../../features/teacher/hooks/useModules'
@@ -15,8 +15,8 @@ import Select from '../../components/ui/Select'
 import Alert from '../../components/ui/Alert'
 import Skeleton from '../../components/ui/Skeleton'
 import ConfirmDialog from '../../components/ui/ConfirmDialog'
-import type { CourseVisibility, CourseCategory, DifficultyLevel, Lesson, Module } from '../../types'
-import { ArrowLeft, ArrowRight, Save, Send, Check, BookOpen, ListChecks, FileCheck } from 'lucide-react'
+import type { CourseVisibility, CourseCategory, DifficultyLevel, Lesson } from '../../types'
+import { ArrowLeft, ArrowRight, Save, Send, Check, BookOpen, ListChecks, FileCheck, BarChart3 } from 'lucide-react'
 
 type BuilderStep = 'basic' | 'syllabus' | 'review'
 
@@ -49,11 +49,18 @@ const DIFFICULTIES = [
 export default function CourseBuilder() {
   const { courseId } = useParams()
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const { user } = useAuth()
   const isEditing = !!courseId
   
+  // Get step from URL or default to 'basic'
+  const stepFromUrl = searchParams.get('step') as BuilderStep | null
+  const initialStep: BuilderStep = (stepFromUrl && ['basic', 'syllabus', 'review'].includes(stepFromUrl)) 
+    ? stepFromUrl 
+    : 'basic'
+  
   // Step management
-  const [currentStep, setCurrentStep] = useState<BuilderStep>('basic')
+  const [currentStep, setCurrentStep] = useState<BuilderStep>(initialStep)
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false)
   
   // Basic info form state
@@ -86,6 +93,16 @@ export default function CourseBuilder() {
   const reorderLesson = useReorderLesson()
   
   const isIndependentTeacher = user?.role === 'independent_teacher'
+  const isApproved = existingCourse?.status === 'approved'
+  
+  // Update URL when step changes
+  useEffect(() => {
+    if (currentStep !== 'basic') {
+      setSearchParams({ step: currentStep }, { replace: true })
+    } else {
+      setSearchParams({}, { replace: true })
+    }
+  }, [currentStep, setSearchParams])
   
   // Initialize form with existing course data
   useEffect(() => {
@@ -100,12 +117,12 @@ export default function CourseBuilder() {
   }, [existingCourse])
   
   // Mark form as dirty when values change
-  const handleFieldChange = (setter: (value: any) => void) => (value: any) => {
+  const handleFieldChange = (setter: (value: string) => void) => (value: string) => {
     setter(value)
     setFormDirty(true)
   }
   
-  // Auto-save draft on step transitions
+  // Save basic info
   const saveBasicInfo = async () => {
     if (!title || !category || !difficulty) return null
     
@@ -142,12 +159,13 @@ export default function CourseBuilder() {
       // Save basic info first
       const course = await saveBasicInfo()
       if (!course && !courseId) {
-        // Need to create course first
+        // Validation failed
         return
       }
       if (course && !courseId) {
-        // Redirect to edit URL after creating
-        navigate(`/teacher/courses/${course.id}/edit`, { replace: true })
+        // Redirect to edit URL after creating, with step in URL
+        navigate(`/teacher/courses/${course.id}/edit?step=${step}`, { replace: true })
+        return
       }
     }
     setCurrentStep(step)
@@ -300,9 +318,11 @@ export default function CourseBuilder() {
           </p>
         </div>
         <div className="flex gap-2">
-          {isEditing && (
+          {isEditing && isApproved && (
             <Link to={`/teacher/courses/${courseId}/analytics`}>
-              <Button variant="secondary" size="sm">View Analytics</Button>
+              <Button variant="secondary" size="sm" leftIcon={<BarChart3 className="w-4 h-4" />}>
+                View Analytics
+              </Button>
             </Link>
           )}
           <Button variant="secondary" onClick={() => navigate('/teacher/courses')}>
@@ -405,7 +425,7 @@ export default function CourseBuilder() {
                         type="radio"
                         name="visibility"
                         checked={visibility === 'private'}
-                        onChange={() => handleFieldChange(setVisibility)('private')}
+                        onChange={() => { setVisibility('private'); setFormDirty(true) }}
                         className="w-4 h-4 text-primary-600 focus:ring-primary-500"
                       />
                       <div>
@@ -418,7 +438,7 @@ export default function CourseBuilder() {
                         type="radio"
                         name="visibility"
                         checked={visibility === 'public'}
-                        onChange={() => handleFieldChange(setVisibility)('public')}
+                        onChange={() => { setVisibility('public'); setFormDirty(true) }}
                         className="w-4 h-4 text-primary-600 focus:ring-primary-500"
                       />
                       <div>
