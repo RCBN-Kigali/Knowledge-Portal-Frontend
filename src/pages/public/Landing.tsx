@@ -31,13 +31,13 @@ function Landing() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 text-white">
+      <section className="bg-primary-600 text-white">
         <div className="max-w-7xl mx-auto px-4 py-20 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 text-white">
               Quality Education Across Paysannat Schools
             </h1>
-            <p className="text-lg sm:text-xl text-primary-100 mb-8">
+            <p className="text-lg sm:text-xl text-white/90 mb-8">
               Access quality courses from experienced teachers across our 4 schools.
               Empowering 20,000+ students with knowledge.
             </p>
@@ -137,8 +137,8 @@ function Landing() {
       {/* CTA */}
       <section className="py-20 bg-primary-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to Start Learning?</h2>
-          <p className="text-lg text-primary-100 mb-8 max-w-2xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">Ready to Start Learning?</h2>
+          <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
             Login with your school account to access all available courses.
           </p>
           <Link to="/login">
