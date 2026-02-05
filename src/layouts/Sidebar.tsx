@@ -1,8 +1,8 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import type { ComponentType } from 'react'
 import {
-  LayoutDashboard, BookOpen, Users, School, Settings, BarChart3,
-  FileText, CheckSquare, GraduationCap, Bell, X, LogOut
+  LayoutDashboard, BookOpen, Users, Building2, Settings, BarChart3,
+  FileText, CheckSquare, GraduationCap, Bell, X, LogOut, UserPlus, Megaphone
 } from 'lucide-react'
 import clsx from 'clsx'
 import { Avatar, Button } from '../components/ui'
@@ -26,10 +26,10 @@ interface NavSection {
 const navigation: NavSection[] = [
   {
     items: [
-      { label: 'Dashboard', to: '/dashboard', icon: LayoutDashboard, roles: ['school_student'] },
-      { label: 'Dashboard', to: '/teacher/dashboard', icon: LayoutDashboard, roles: ['school_teacher', 'independent_teacher'] },
-      { label: 'Dashboard', to: '/admin/dashboard', icon: LayoutDashboard, roles: ['school_admin'] },
-      { label: 'Dashboard', to: '/superadmin/dashboard', icon: LayoutDashboard, roles: ['super_admin'] },
+      { label: 'Dashboard', to: '/student/dashboard', icon: LayoutDashboard, roles: ['school_student'], end: true },
+      { label: 'Dashboard', to: '/teacher/dashboard', icon: LayoutDashboard, roles: ['school_teacher', 'independent_teacher'], end: true },
+      { label: 'Dashboard', to: '/admin/dashboard', icon: LayoutDashboard, roles: ['school_admin'], end: true },
+      { label: 'Dashboard', to: '/superadmin/dashboard', icon: LayoutDashboard, roles: ['super_admin'], end: true },
     ],
   },
   {
@@ -54,15 +54,19 @@ const navigation: NavSection[] = [
     title: 'Management',
     items: [
       { label: 'User Management', to: '/admin/users', icon: Users, roles: ['school_admin'] },
-      { label: 'Course Approvals', to: '/admin/courses', icon: CheckSquare, roles: ['school_admin'] },
-      { label: 'School Settings', to: '/admin/settings', icon: Settings, roles: ['school_admin'] },
+      { label: 'Course Approvals', to: '/admin/approvals', icon: CheckSquare, roles: ['school_admin'] },
+      { label: 'Announcements', to: '/admin/announcements', icon: Megaphone, roles: ['school_admin'] },
+      { label: 'Analytics', to: '/admin/analytics', icon: BarChart3, roles: ['school_admin'] },
     ],
   },
   {
     title: 'System',
     items: [
-      { label: 'All Schools', to: '/superadmin/schools', icon: School, roles: ['super_admin'] },
-      { label: 'All Users', to: '/superadmin/users', icon: Users, roles: ['super_admin'] },
+      { label: 'Schools', to: '/superadmin/schools', icon: Building2, roles: ['super_admin'] },
+      { label: 'User Management', to: '/superadmin/users', icon: Users, roles: ['super_admin'] },
+      { label: 'Independent Teachers', to: '/superadmin/teachers', icon: UserPlus, roles: ['super_admin'] },
+      { label: 'Course Approvals', to: '/superadmin/approvals', icon: CheckSquare, roles: ['super_admin'] },
+      { label: 'Announcements', to: '/superadmin/announcements', icon: Megaphone, roles: ['super_admin'] },
       { label: 'Analytics', to: '/superadmin/analytics', icon: BarChart3, roles: ['super_admin'] },
     ],
   },

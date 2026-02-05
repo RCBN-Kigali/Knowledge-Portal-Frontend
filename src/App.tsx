@@ -22,6 +22,9 @@ import About from './pages/public/About'
 // Auth Pages
 import Login from './pages/auth/Login'
 
+// Dashboard Redirect
+import DashboardRedirect from './pages/DashboardRedirect'
+
 // Student Pages
 import StudentDashboard from './pages/student/StudentDashboard'
 import BrowseCourses from './pages/student/BrowseCourses'
@@ -29,7 +32,7 @@ import MyEnrollments from './pages/student/MyEnrollments'
 import CourseDetail from './pages/student/CourseDetail'
 import LearningInterface from './pages/student/LearningInterface'
 import Progress from './pages/student/Progress'
-import Announcements from './pages/student/Announcements'
+import StudentAnnouncements from './pages/student/Announcements'
 
 // Teacher Pages
 import TeacherDashboard from './pages/teacher/TeacherDashboard'
@@ -38,6 +41,20 @@ import CourseBuilder from './pages/teacher/CourseBuilder'
 import StudentManagement from './pages/teacher/StudentManagement'
 import Submissions from './pages/teacher/Submissions'
 import CourseAnalytics from './pages/teacher/CourseAnalytics'
+
+// School Admin Pages
+import AdminDashboard from './pages/admin/AdminDashboard'
+import UserManagement from './pages/admin/UserManagement'
+import CourseApprovals from './pages/admin/CourseApprovals'
+import CourseReview from './pages/admin/CourseReview'
+import AdminAnnouncements from './pages/admin/Announcements'
+import AdminAnalytics from './pages/admin/Analytics'
+
+// Super Admin Pages
+import SuperAdminDashboard from './pages/superadmin/SuperAdminDashboard'
+import SchoolsOverview from './pages/superadmin/SchoolsOverview'
+import SchoolDetail from './pages/superadmin/SchoolDetail'
+import IndependentTeachers from './pages/superadmin/IndependentTeachers'
 
 // Error Pages
 import NotFound from './pages/errors/NotFound'
@@ -66,13 +83,14 @@ function App() {
             {/* Protected Routes with AppLayout */}
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               {/* Dashboard - redirects based on role */}
-              <Route path="/dashboard" element={
+              <Route path="/dashboard" element={<DashboardRedirect />} />
+
+              {/* Student Routes */}
+              <Route path="/student/dashboard" element={
                 <RoleGuard roles={['school_student']}>
                   <StudentDashboard />
                 </RoleGuard>
               } />
-
-              {/* Student Routes */}
               <Route path="/student/courses" element={
                 <RoleGuard roles={['school_student']}>
                   <BrowseCourses />
@@ -100,7 +118,7 @@ function App() {
               } />
               <Route path="/student/announcements" element={
                 <RoleGuard roles={['school_student']}>
-                  <Announcements />
+                  <StudentAnnouncements />
                 </RoleGuard>
               } />
 
@@ -141,17 +159,82 @@ function App() {
                 </RoleGuard>
               } />
 
-              {/* Admin Routes - Placeholder */}
-              <Route path="/admin/*" element={
+              {/* School Admin Routes */}
+              <Route path="/admin/dashboard" element={
                 <RoleGuard roles={['school_admin']} requireSchoolId>
-                  <div className="p-8 text-center text-gray-500">School Admin - Coming Soon</div>
+                  <AdminDashboard />
+                </RoleGuard>
+              } />
+              <Route path="/admin/users" element={
+                <RoleGuard roles={['school_admin']} requireSchoolId>
+                  <UserManagement />
+                </RoleGuard>
+              } />
+              <Route path="/admin/approvals" element={
+                <RoleGuard roles={['school_admin']} requireSchoolId>
+                  <CourseApprovals />
+                </RoleGuard>
+              } />
+              <Route path="/admin/approvals/:courseId" element={
+                <RoleGuard roles={['school_admin']} requireSchoolId>
+                  <CourseReview />
+                </RoleGuard>
+              } />
+              <Route path="/admin/announcements" element={
+                <RoleGuard roles={['school_admin']} requireSchoolId>
+                  <AdminAnnouncements />
+                </RoleGuard>
+              } />
+              <Route path="/admin/analytics" element={
+                <RoleGuard roles={['school_admin']} requireSchoolId>
+                  <AdminAnalytics />
                 </RoleGuard>
               } />
 
-              {/* Super Admin Routes - Placeholder */}
-              <Route path="/superadmin/*" element={
+              {/* Super Admin Routes */}
+              <Route path="/superadmin/dashboard" element={
                 <RoleGuard roles={['super_admin']}>
-                  <div className="p-8 text-center text-gray-500">Super Admin - Coming Soon</div>
+                  <SuperAdminDashboard />
+                </RoleGuard>
+              } />
+              <Route path="/superadmin/schools" element={
+                <RoleGuard roles={['super_admin']}>
+                  <SchoolsOverview />
+                </RoleGuard>
+              } />
+              <Route path="/superadmin/schools/:schoolId" element={
+                <RoleGuard roles={['super_admin']}>
+                  <SchoolDetail />
+                </RoleGuard>
+              } />
+              <Route path="/superadmin/users" element={
+                <RoleGuard roles={['super_admin']}>
+                  <UserManagement />
+                </RoleGuard>
+              } />
+              <Route path="/superadmin/teachers" element={
+                <RoleGuard roles={['super_admin']}>
+                  <IndependentTeachers />
+                </RoleGuard>
+              } />
+              <Route path="/superadmin/approvals" element={
+                <RoleGuard roles={['super_admin']}>
+                  <CourseApprovals />
+                </RoleGuard>
+              } />
+              <Route path="/superadmin/approvals/:courseId" element={
+                <RoleGuard roles={['super_admin']}>
+                  <CourseReview />
+                </RoleGuard>
+              } />
+              <Route path="/superadmin/announcements" element={
+                <RoleGuard roles={['super_admin']}>
+                  <AdminAnnouncements />
+                </RoleGuard>
+              } />
+              <Route path="/superadmin/analytics" element={
+                <RoleGuard roles={['super_admin']}>
+                  <AdminAnalytics />
                 </RoleGuard>
               } />
 

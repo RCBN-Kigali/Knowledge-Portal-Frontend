@@ -1,7 +1,7 @@
 import { createContext, useState, useCallback, type ReactNode } from 'react'
 import type { User } from '../types'
 
-// Mock users for development - all students belong to a school
+// Mock users for development
 const MOCK_USERS: Record<string, { password: string; user: User }> = {
   'jean@paysannat.edu.rw': {
     password: 'password123',
@@ -56,7 +56,21 @@ const MOCK_USERS: Record<string, { password: string; user: User }> = {
       role: 'school_admin',
       schoolId: 'school-1',
       schoolName: 'Paysannat Main Campus',
-      permissions: ['manage_school', 'manage_teachers', 'manage_students'],
+      permissions: ['manage_school', 'manage_teachers', 'manage_students', 'approve_courses'],
+    },
+  },
+  'superadmin@rcbn.edu.rw': {
+    password: 'password123',
+    user: {
+      id: '5',
+      email: 'superadmin@rcbn.edu.rw',
+      name: 'Super Admin',
+      firstName: 'Super',
+      lastName: 'Admin',
+      role: 'super_admin',
+      schoolId: null,
+      schoolName: undefined,
+      permissions: ['manage_all_schools', 'manage_all_users', 'approve_public_courses', 'manage_announcements'],
     },
   },
 }

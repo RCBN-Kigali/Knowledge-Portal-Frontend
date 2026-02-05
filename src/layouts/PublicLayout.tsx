@@ -3,7 +3,6 @@ import { Link, Outlet } from 'react-router-dom'
 import { BookOpen, Menu, X } from 'lucide-react'
 import { Button } from '../components/ui'
 import Footer from './Footer'
-import clsx from 'clsx'
 
 function PublicLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -40,13 +39,10 @@ function PublicLayout() {
               ))}
             </nav>
 
-            {/* Desktop auth buttons */}
-            <div className="hidden md:flex items-center gap-3">
+            {/* Desktop auth button */}
+            <div className="hidden md:flex items-center">
               <Link to="/login">
-                <Button variant="ghost">Login</Button>
-              </Link>
-              <Link to="/register">
-                <Button variant="primary">Register</Button>
+                <Button variant="primary">Login</Button>
               </Link>
             </div>
 
@@ -74,12 +70,9 @@ function PublicLayout() {
                   {link.label}
                 </Link>
               ))}
-              <div className="pt-3 border-t border-gray-200 space-y-2">
+              <div className="pt-3 border-t border-gray-200">
                 <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="ghost" fullWidth>Login</Button>
-                </Link>
-                <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="primary" fullWidth>Register</Button>
+                  <Button variant="primary" fullWidth>Login</Button>
                 </Link>
               </div>
             </nav>
