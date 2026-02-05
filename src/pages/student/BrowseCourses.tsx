@@ -42,7 +42,7 @@ function BrowseCourses() {
   })
 
   const { data: enrollments } = useEnrollments()
-  const enrolledCourseIds = new Set(enrollments?.map(e => e.courseId) || [])
+  const enrolledCourseIds = new Set(Array.isArray(enrollments) ? enrollments.map(e => e.courseId) : [])
 
   const courses = data?.data ?? []
   const pagination = data?.pagination

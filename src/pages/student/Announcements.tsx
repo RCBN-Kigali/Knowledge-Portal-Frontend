@@ -10,7 +10,7 @@ function Announcements() {
 
   // Group by date
   const groupedAnnouncements = useMemo(() => {
-    if (!announcements) return {}
+    if (!Array.isArray(announcements)) return {}
     const groups: Record<string, typeof announcements> = {}
     for (const a of announcements) {
       const date = new Date(a.createdAt).toLocaleDateString('en-US', { 

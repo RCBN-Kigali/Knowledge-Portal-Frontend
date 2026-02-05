@@ -27,7 +27,7 @@ function MyEnrollments() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map(i => <Skeleton key={i} variant="card" />)}
         </div>
-      ) : !enrollments || enrollments.length === 0 ? (
+      ) : !Array.isArray(enrollments) || enrollments.length === 0 ? (
         <Card className="p-12">
           <EmptyState
             icon={BookOpen}

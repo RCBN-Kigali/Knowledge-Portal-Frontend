@@ -23,7 +23,7 @@ function CourseDetail() {
   const [activeTab, setActiveTab] = useState('overview')
 
   const enrollment = useMemo(() => {
-    return enrollments?.find(e => e.courseId === id)
+    return Array.isArray(enrollments) ? enrollments.find(e => e.courseId === id) : undefined
   }, [enrollments, id])
 
   const handleEnroll = async () => {

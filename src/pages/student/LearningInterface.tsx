@@ -17,7 +17,7 @@ function LearningInterface() {
 
   // Get enrollment to find courseId
   const { data: enrollments } = useEnrollments()
-  const enrollment = useMemo(() => enrollments?.find(e => e.id === enrollmentId), [enrollments, enrollmentId])
+  const enrollment = useMemo(() => Array.isArray(enrollments) ? enrollments.find(e => e.id === enrollmentId) : undefined, [enrollments, enrollmentId])
 
   const { data: courseData, isLoading: courseLoading } = useCourseContent(enrollment?.courseId)
 

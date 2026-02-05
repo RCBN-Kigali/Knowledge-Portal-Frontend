@@ -27,10 +27,10 @@ function StudentDashboard() {
   }
 
   const stats = [
-    { icon: BookOpen, label: 'Enrolled', value: String(data?.stats.enrolledCount ?? 0), color: 'bg-primary-100 text-primary-600' },
-    { icon: CheckCircle2, label: 'Completed', value: String(data?.stats.completedCount ?? 0), color: 'bg-success-100 text-success-600' },
-    { icon: TrendingUp, label: 'Avg Grade', value: `${data?.stats.averageGrade ?? 0}%`, color: 'bg-warning-100 text-warning-600' },
-    { icon: Clock, label: 'Hours Spent', value: String(data?.stats.hoursSpent ?? 0), color: 'bg-purple-100 text-purple-600' },
+    { icon: BookOpen, label: 'Enrolled', value: String(data?.stats?.enrolledCount ?? 0), color: 'bg-primary-100 text-primary-600' },
+    { icon: CheckCircle2, label: 'Completed', value: String(data?.stats?.completedCount ?? 0), color: 'bg-success-100 text-success-600' },
+    { icon: TrendingUp, label: 'Avg Grade', value: `${data?.stats?.averageGrade ?? 0}%`, color: 'bg-warning-100 text-warning-600' },
+    { icon: Clock, label: 'Hours Spent', value: String(data?.stats?.hoursSpent ?? 0), color: 'bg-purple-100 text-purple-600' },
   ]
 
   return (
