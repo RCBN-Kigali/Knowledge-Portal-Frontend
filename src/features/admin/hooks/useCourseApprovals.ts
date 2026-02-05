@@ -132,7 +132,7 @@ export function useCourseForReview(courseId: string | undefined) {
       const allCourses = [...MOCK_PENDING_COURSES, ...MOCK_APPROVED_COURSES, ...MOCK_REJECTED_COURSES]
       return allCourses.find(c => c.id === courseId) || null
     },
-    enabled: \!\!courseId,
+    enabled: !!courseId,
   })
 }
 

@@ -59,7 +59,7 @@ export function useAdminUsers(filters: AdminUsersFilters = {}) {
       // School admin can only see their school users
       if (user?.role === 'school_admin') {
         filtered = filtered.filter(u => u.schoolId === user.schoolId)
-      } else if (schoolId && schoolId \!== 'all') {
+      } else if (schoolId && schoolId !== 'all') {
         filtered = filtered.filter(u => u.schoolId === schoolId)
       }
       
@@ -71,11 +71,11 @@ export function useAdminUsers(filters: AdminUsersFilters = {}) {
         )
       }
       
-      if (role && role \!== 'all') {
+      if (role && role !== 'all') {
         filtered = filtered.filter(u => u.role === role)
       }
       
-      if (status && status \!== 'all') {
+      if (status && status !== 'all') {
         filtered = filtered.filter(u => u.status === status)
       }
       
@@ -107,7 +107,7 @@ export function useCreateUser() {
   return useMutation({
     mutationFn: async (data: CreateUserData): Promise<{ user: AdminUser; tempPassword: string }> => {
       await new Promise(resolve => setTimeout(resolve, 500))
-      const tempPassword = Math.random().toString(36).slice(-8) + 'A1\!'
+      const tempPassword = Math.random().toString(36).slice(-8) + 'A1!'
       const newUser: AdminUser = {
         id: `u-${Date.now()}`,
         name: data.name,
@@ -171,7 +171,7 @@ export function useResetPassword() {
   return useMutation({
     mutationFn: async (userId: string): Promise<{ tempPassword: string }> => {
       await new Promise(resolve => setTimeout(resolve, 300))
-      const tempPassword = Math.random().toString(36).slice(-8) + 'A1\!'
+      const tempPassword = Math.random().toString(36).slice(-8) + 'A1!'
       return { tempPassword }
     },
   })
