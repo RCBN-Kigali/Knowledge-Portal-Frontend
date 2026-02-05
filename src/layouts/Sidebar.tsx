@@ -15,6 +15,7 @@ interface NavItem {
   to: string
   icon: ComponentType<{ className?: string }>
   roles: UserRole[]
+  end?: boolean
 }
 
 interface NavSection {
@@ -34,7 +35,7 @@ const navigation: NavSection[] = [
   {
     title: 'Learning',
     items: [
-      { label: 'Browse Courses', to: '/student/courses', icon: BookOpen, roles: ['school_student'] },
+      { label: 'Browse Courses', to: '/student/courses', icon: BookOpen, roles: ['school_student'], end: true },
       { label: 'My Enrollments', to: '/student/enrollments', icon: GraduationCap, roles: ['school_student'] },
       { label: 'My Progress', to: '/student/progress', icon: BarChart3, roles: ['school_student'] },
       { label: 'Announcements', to: '/student/announcements', icon: Bell, roles: ['school_student'] },
@@ -43,7 +44,7 @@ const navigation: NavSection[] = [
   {
     title: 'Teaching',
     items: [
-      { label: 'My Courses', to: '/teacher/courses', icon: BookOpen, roles: ['school_teacher', 'independent_teacher'] },
+      { label: 'My Courses', to: '/teacher/courses', icon: BookOpen, roles: ['school_teacher', 'independent_teacher'], end: true },
       { label: 'Create Course', to: '/teacher/courses/new', icon: FileText, roles: ['school_teacher', 'independent_teacher'] },
       { label: 'Students', to: '/teacher/students', icon: Users, roles: ['school_teacher', 'independent_teacher'] },
       { label: 'Submissions', to: '/teacher/submissions', icon: CheckSquare, roles: ['school_teacher', 'independent_teacher'] },
@@ -137,6 +138,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <NavLink
                     key={item.to}
                     to={item.to}
+                    end={item.end}
                     onClick={onClose}
                     className={({ isActive }) =>
                       clsx(
