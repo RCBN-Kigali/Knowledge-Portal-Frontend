@@ -334,3 +334,29 @@ export interface CourseAnalytics {
   quizScores: { quizTitle: string; averageScore: number }[]
   assignmentSubmissionRate: number
 }
+
+// ─── Chat Types ────────────────────────────────────────────
+
+export interface Message {
+  id: string
+  conversationId: string
+  senderId: string
+  senderName: string
+  senderAvatarUrl?: string
+  text: string
+  sentAt: string
+}
+
+export interface Conversation {
+  id: string
+  courseId: string
+  courseName: string
+  participantId: string
+  participantName: string
+  participantAvatarUrl?: string
+  participantRole: 'student' | 'teacher'
+  lastMessage?: string
+  lastMessageAt?: string
+  unreadCount: number
+  messages: Message[]
+}

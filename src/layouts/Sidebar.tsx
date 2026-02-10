@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import type { ComponentType } from 'react'
 import {
   LayoutDashboard, BookOpen, Users, Building2, Settings, BarChart3,
-  FileText, CheckSquare, GraduationCap, Bell, X, LogOut, UserPlus, Megaphone
+  FileText, CheckSquare, GraduationCap, Bell, X, LogOut, UserPlus, Megaphone, MessageSquare
 } from 'lucide-react'
 import clsx from 'clsx'
 import { Avatar, Button } from '../components/ui'
@@ -39,6 +39,7 @@ const navigation: NavSection[] = [
       { label: 'My Enrollments', to: '/student/enrollments', icon: GraduationCap, roles: ['school_student'] },
       { label: 'My Progress', to: '/student/progress', icon: BarChart3, roles: ['school_student'] },
       { label: 'Announcements', to: '/student/announcements', icon: Bell, roles: ['school_student'] },
+      { label: 'Messages', to: '/student/chat', icon: MessageSquare, roles: ['school_student'] },
     ],
   },
   {
@@ -48,6 +49,7 @@ const navigation: NavSection[] = [
       { label: 'Create Course', to: '/teacher/courses/new', icon: FileText, roles: ['school_teacher', 'independent_teacher'] },
       { label: 'Students', to: '/teacher/students', icon: Users, roles: ['school_teacher', 'independent_teacher'] },
       { label: 'Submissions', to: '/teacher/submissions', icon: CheckSquare, roles: ['school_teacher', 'independent_teacher'] },
+      { label: 'Messages', to: '/teacher/chat', icon: MessageSquare, roles: ['school_teacher', 'independent_teacher'] },
     ],
   },
   {

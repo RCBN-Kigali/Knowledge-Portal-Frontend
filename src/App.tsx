@@ -56,6 +56,9 @@ import SchoolsOverview from './pages/superadmin/SchoolsOverview'
 import SchoolDetail from './pages/superadmin/SchoolDetail'
 import IndependentTeachers from './pages/superadmin/IndependentTeachers'
 
+// Chat
+import Chat from './pages/chat/Chat'
+
 // Profile
 import Profile from './pages/profile/Profile'
 
@@ -124,6 +127,11 @@ function App() {
                   <StudentAnnouncements />
                 </RoleGuard>
               } />
+              <Route path="/student/chat" element={
+                <RoleGuard roles={['school_student']}>
+                  <Chat />
+                </RoleGuard>
+              } />
 
               {/* Teacher Routes */}
               <Route path="/teacher/dashboard" element={
@@ -159,6 +167,11 @@ function App() {
               <Route path="/teacher/submissions" element={
                 <RoleGuard roles={['school_teacher', 'independent_teacher']}>
                   <Submissions />
+                </RoleGuard>
+              } />
+              <Route path="/teacher/chat" element={
+                <RoleGuard roles={['school_teacher', 'independent_teacher']}>
+                  <Chat />
                 </RoleGuard>
               } />
 
