@@ -56,6 +56,9 @@ import SchoolsOverview from './pages/superadmin/SchoolsOverview'
 import SchoolDetail from './pages/superadmin/SchoolDetail'
 import IndependentTeachers from './pages/superadmin/IndependentTeachers'
 
+// Profile
+import Profile from './pages/profile/Profile'
+
 // Error Pages
 import NotFound from './pages/errors/NotFound'
 import Forbidden from './pages/errors/Forbidden'
@@ -239,7 +242,7 @@ function App() {
               } />
 
               {/* Profile & Settings */}
-              <Route path="/profile" element={<div className="p-8 text-center text-gray-500">Profile - Coming Soon</div>} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="/settings" element={<div className="p-8 text-center text-gray-500">Settings - Coming Soon</div>} />
             </Route>
 

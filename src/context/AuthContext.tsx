@@ -75,6 +75,13 @@ const MOCK_USERS: Record<string, { password: string; user: User }> = {
   },
 }
 
+interface ProfileData {
+  firstName: string
+  lastName: string
+  name: string
+  email: string
+}
+
 interface AuthContextType {
   user: User | null
   isLoading: boolean
@@ -85,6 +92,8 @@ interface AuthContextType {
   logout: () => Promise<void>
   checkAuth: () => Promise<void>
   clearError: () => void
+  updateProfile: (data: ProfileData) => Promise<void>
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -151,6 +160,50 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setError(null)
   }, [])
 
+  const updateProfile = useCallback(async (data: ProfileData) => {
+    if (!user) throw new Error('Not authenticated')
+
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 500))
+
+    const updatedUser: User = {
+      ...user,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      name: data.name,
+      email: data.email,
+    }
+
+    // Update mock users store so login still works with new email
+    const oldEmail = user.email.toLowerCase()
+    const newEmail = data.email.toLowerCase()
+    const mockEntry = MOCK_USERS[oldEmail]
+    if (mockEntry) {
+      if (oldEmail !== newEmail) {
+        MOCK_USERS[newEmail] = { ...mockEntry, user: updatedUser }
+        delete MOCK_USERS[oldEmail]
+      } else {
+        MOCK_USERS[oldEmail].user = updatedUser
+      }
+    }
+
+    persistUser(updatedUser)
+  }, [user, persistUser])
+
+  const changePassword = useCallback(async (currentPassword: string, newPassword: string) => {
+    if (!user) throw new Error('Not authenticated')
+
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 500))
+
+    const mockEntry = MOCK_USERS[user.email.toLowerCase()]
+    if (!mockEntry || mockEntry.password !== currentPassword) {
+      throw new Error('Current password is incorrect')
+    }
+
+    mockEntry.password = newPassword
+  }, [user])
+
   return (
     <AuthContext.Provider
       value={{
@@ -163,6 +216,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         logout,
         checkAuth,
         clearError,
+        updateProfile,
+        changePassword,
       }}
     >
       {children}

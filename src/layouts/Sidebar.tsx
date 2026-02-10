@@ -164,7 +164,16 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
 
         {/* User profile & Logout */}
         <div className="p-4 border-t border-gray-200 space-y-3">
-          <div className="flex items-center gap-3">
+          <NavLink
+            to="/profile"
+            onClick={onClose}
+            className={({ isActive }) =>
+              clsx(
+                'flex items-center gap-3 rounded-lg p-2 -m-2 transition-colors',
+                isActive ? 'bg-primary-50' : 'hover:bg-gray-50'
+              )
+            }
+          >
             <Avatar name={user?.name || 'User'} size="sm" />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-900 truncate">
@@ -174,7 +183,7 @@ function Sidebar({ isOpen, onClose }: SidebarProps) {
                 {user?.schoolName || user?.role.replace(/_/g, ' ')}
               </p>
             </div>
-          </div>
+          </NavLink>
           <Button
             variant="ghost"
             size="sm"
