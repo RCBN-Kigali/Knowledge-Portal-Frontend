@@ -107,6 +107,12 @@ export const adminApi = {
     const { data } = await client.get<PendingContentPage>('/admin/content/pending', { params })
     return data
   },
+  getContent: async (contentId: string): Promise<Content> => {
+    // Admin-only read that returns content regardless of status (drafts,
+    // pending, rejected, published) for review purposes.
+    const { data } = await client.get<Content>(`/admin/content/${contentId}`)
+    return data
+  },
   approveContent: async (contentId: string): Promise<Content> => {
     const { data } = await client.post<Content>(`/admin/content/${contentId}/approve`)
     return data

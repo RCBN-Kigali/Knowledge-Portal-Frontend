@@ -39,6 +39,7 @@ import TeacherComments from './pages/teacher/TeacherComments'
 import TeacherProfile from './pages/teacher/TeacherProfile'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import PendingApprovals from './pages/admin/PendingApprovals'
+import ContentReview from './pages/admin/ContentReview'
 import TeacherManagement from './pages/admin/TeacherManagement'
 import AddTeacher from './pages/admin/AddTeacher'
 import AdminAnnouncements from './pages/admin/AdminAnnouncements'
@@ -111,6 +112,7 @@ export default function App() {
               <Route index element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="approvals" element={<PendingApprovals />} />
+              <Route path="approvals/:contentId" element={<ContentReview />} />
               <Route path="teachers" element={<TeacherManagement />} />
               <Route path="teachers/add" element={<AddTeacher />} />
               <Route path="announcements" element={<AdminAnnouncements />} />

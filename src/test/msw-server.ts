@@ -314,6 +314,8 @@ export const handlers = [
     })
   }),
 
+  // Note: register the literal /admin/content/pending route BEFORE the
+  // parameterized /:id one — MSW matches in registration order.
   http.get(`${API}/admin/content/pending`, ({ request }) => {
     const me = userFromAuthHeader(request)
     if (!me) return HttpResponse.json({ detail: 'Unauthenticated' }, { status: 401 })
@@ -325,6 +327,15 @@ export const handlers = [
       total: items.length,
       items,
     })
+  }),
+
+  http.get(`${API}/admin/content/:id`, ({ params, request }) => {
+    const me = userFromAuthHeader(request)
+    if (!me) return HttpResponse.json({ detail: 'Unauthenticated' }, { status: 401 })
+    if (me.role !== 'admin') return HttpResponse.json({ detail: 'Forbidden' }, { status: 403 })
+    const c = state.contents.get(params.id as string)
+    if (!c) return HttpResponse.json({ detail: 'Not found' }, { status: 404 })
+    return HttpResponse.json(c)
   }),
 
   http.post(`${API}/admin/content/:id/approve`, ({ params, request }) => {

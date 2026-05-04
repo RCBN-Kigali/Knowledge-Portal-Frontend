@@ -168,9 +168,7 @@ export default function PendingApprovals() {
 
                     <div className="flex flex-col gap-2 lg:items-end lg:w-44">
                       <Link
-                        to={`/student/content/${item.id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        to={`/admin/approvals/${item.id}`}
                         className="flex items-center justify-center gap-2 px-4 py-2 bg-card border border-border rounded-xl hover:bg-muted transition-colors text-sm w-full"
                       >
                         <Eye className="w-4 h-4" />
