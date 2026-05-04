@@ -1,7 +1,9 @@
 import client from './client'
+import type { Content } from '../types'
 
 export interface AdminStats {
   pending_approvals: number
+  pending_content: number
   total_teachers: number
   active_teachers: number
   total_students: number
@@ -24,6 +26,13 @@ export interface TeacherPublic {
 export interface ApprovalsResponse {
   total: number
   pending: TeacherPublic[]
+}
+
+export interface PendingContentPage {
+  page: number
+  limit: number
+  total: number
+  items: Content[]
 }
 
 export interface AddTeacherInput {
@@ -90,5 +99,20 @@ export const adminApi = {
   },
   deleteAnnouncement: async (id: string): Promise<void> => {
     await client.delete(`/announcements/${id}`)
+  },
+  // ─── Content review (new approval workflow) ────────────────────────────
+  pendingContent: async (
+    params: { page?: number; limit?: number } = {},
+  ): Promise<PendingContentPage> => {
+    const { data } = await client.get<PendingContentPage>('/admin/content/pending', { params })
+    return data
+  },
+  approveContent: async (contentId: string): Promise<Content> => {
+    const { data } = await client.post<Content>(`/admin/content/${contentId}/approve`)
+    return data
+  },
+  rejectContent: async (contentId: string): Promise<Content> => {
+    const { data } = await client.post<Content>(`/admin/content/${contentId}/reject`)
+    return data
   },
 }

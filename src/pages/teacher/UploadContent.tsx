@@ -396,7 +396,7 @@ export default function UploadContent() {
               disabled={!canSubmit || uploadMut.isPending}
               className="flex-1 px-6 py-4 bg-primary text-primary-foreground rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
             >
-              {uploadMut.isPending ? 'Publishing…' : 'Publish Content'}
+              {uploadMut.isPending ? 'Submitting…' : 'Submit for Review'}
             </button>
             <button
               type="button"
@@ -407,6 +407,10 @@ export default function UploadContent() {
               {uploadMut.isPending ? 'Saving…' : 'Save as Draft'}
             </button>
           </div>
+          <p className="text-xs text-muted-foreground text-center pt-1">
+            Submitted content goes to an administrator for review before becoming
+            visible to students.
+          </p>
         </div>
       </div>
     </div>

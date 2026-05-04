@@ -280,7 +280,9 @@ export const handlers = [
         .map((s) => s.trim())
         .filter(Boolean),
       external_links: JSON.parse((fd.get('external_links') as string) ?? '[]'),
-      status: fd.get('publish') === 'true' ? 'published' : 'draft',
+      // Submitting for review goes to 'pending'; admin approval flips it
+      // to 'published' via the /admin/content/:id/approve handler.
+      status: fd.get('publish') === 'true' ? 'pending' : 'draft',
       views_count: 0,
       likes_count: 0,
       dislikes_count: 0,
@@ -302,6 +304,7 @@ export const handlers = [
     const content = Array.from(state.contents.values())
     return HttpResponse.json({
       pending_approvals: teachers.filter((t) => t.approval_status === 'pending').length,
+      pending_content: content.filter((c) => c.status === 'pending').length,
       total_teachers: teachers.length,
       active_teachers: teachers.filter((t) => t.is_active && t.approval_status === 'approved').length,
       total_students: students.length,
@@ -309,6 +312,41 @@ export const handlers = [
       published_content: content.filter((c) => c.status === 'published').length,
       draft_content: content.filter((c) => c.status === 'draft').length,
     })
+  }),
+
+  http.get(`${API}/admin/content/pending`, ({ request }) => {
+    const me = userFromAuthHeader(request)
+    if (!me) return HttpResponse.json({ detail: 'Unauthenticated' }, { status: 401 })
+    if (me.role !== 'admin') return HttpResponse.json({ detail: 'Forbidden' }, { status: 403 })
+    const items = Array.from(state.contents.values()).filter((c) => c.status === 'pending')
+    return HttpResponse.json({
+      page: 1,
+      limit: items.length,
+      total: items.length,
+      items,
+    })
+  }),
+
+  http.post(`${API}/admin/content/:id/approve`, ({ params, request }) => {
+    const me = userFromAuthHeader(request)
+    if (!me || me.role !== 'admin') {
+      return HttpResponse.json({ detail: 'Forbidden' }, { status: 403 })
+    }
+    const c = state.contents.get(params.id as string)
+    if (!c) return HttpResponse.json({ detail: 'Not found' }, { status: 404 })
+    c.status = 'published'
+    return HttpResponse.json(c)
+  }),
+
+  http.post(`${API}/admin/content/:id/reject`, ({ params, request }) => {
+    const me = userFromAuthHeader(request)
+    if (!me || me.role !== 'admin') {
+      return HttpResponse.json({ detail: 'Forbidden' }, { status: 403 })
+    }
+    const c = state.contents.get(params.id as string)
+    if (!c) return HttpResponse.json({ detail: 'Not found' }, { status: 404 })
+    c.status = 'rejected'
+    return HttpResponse.json(c)
   }),
 
   http.get(`${API}/admin/approvals`, ({ request }) => {

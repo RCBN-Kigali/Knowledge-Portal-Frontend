@@ -58,6 +58,20 @@ function thumbnailFor(content: Content): string {
   }
 }
 
+function statusBadge(status: string): { label: string; classes: string } {
+  switch (status) {
+    case 'published':
+      return { label: 'Published', classes: 'bg-green-500 text-white border-0' }
+    case 'pending':
+      return { label: 'Pending review', classes: 'bg-amber-100 text-amber-800 border-0' }
+    case 'rejected':
+      return { label: 'Rejected', classes: 'bg-red-100 text-red-700 border-0' }
+    case 'draft':
+    default:
+      return { label: 'Draft', classes: 'bg-muted text-muted-foreground border-0' }
+  }
+}
+
 export default function TeacherDashboard() {
   const [selectedType, setSelectedType] = useState<(typeof contentTypes)[number]['id']>('all')
 
@@ -103,6 +117,7 @@ export default function TeacherDashboard() {
             {filtered.map((item) => {
               const Icon = getContentIcon(item.content_type)
               const isPublished = item.status === 'published'
+              const badge = statusBadge(item.status)
               return (
                 <div
                   key={item.id}
@@ -121,15 +136,7 @@ export default function TeacherDashboard() {
                         <Icon className="w-4 h-4" />
                       </div>
                       <div className="absolute bottom-2 left-2">
-                        <Badge
-                          className={
-                            isPublished
-                              ? 'bg-green-500 text-white border-0'
-                              : 'bg-amber-100 text-amber-800 border-0'
-                          }
-                        >
-                          {isPublished ? 'Published' : 'Draft'}
-                        </Badge>
+                        <Badge className={badge.classes}>{badge.label}</Badge>
                       </div>
                     </div>
 
@@ -137,9 +144,13 @@ export default function TeacherDashboard() {
                       <div>
                         <h3 className="mb-2 line-clamp-2 font-medium">{item.title}</h3>
                         <p className="text-sm text-muted-foreground mb-3">
-                          {isPublished
-                            ? formatDistanceToNow(new Date(item.created_at), { addSuffix: true })
-                            : `Draft saved ${formatDistanceToNow(new Date(item.updated_at), { addSuffix: true })}`}
+                          {item.status === 'draft'
+                            ? `Draft saved ${formatDistanceToNow(new Date(item.updated_at), { addSuffix: true })}`
+                            : item.status === 'pending'
+                            ? `Submitted ${formatDistanceToNow(new Date(item.updated_at), { addSuffix: true })}`
+                            : item.status === 'rejected'
+                            ? `Rejected ${formatDistanceToNow(new Date(item.updated_at), { addSuffix: true })}`
+                            : formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
                         </p>
                       </div>
                       <div className="space-y-3">

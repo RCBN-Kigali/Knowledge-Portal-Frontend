@@ -25,7 +25,7 @@ describe('UploadContent', () => {
     const user = userEvent.setup()
     renderWithProviders(<UploadContent />, { authAs: teacherAuth() })
 
-    const publish = screen.getByRole('button', { name: /publish content/i }) as HTMLButtonElement
+    const publish = screen.getByRole('button', { name: /submit for review/i }) as HTMLButtonElement
     expect(publish.disabled).toBe(true)
 
     // Fill the easy bits.
@@ -63,7 +63,7 @@ describe('UploadContent', () => {
     const body = screen.getByPlaceholderText(/write your article content here/i)
     await user.type(body, 'Article body text.')
 
-    const publish = screen.getByRole('button', { name: /publish content/i })
+    const publish = screen.getByRole('button', { name: /submit for review/i })
     await waitFor(() => expect((publish as HTMLButtonElement).disabled).toBe(false))
     await user.click(publish)
 
@@ -71,7 +71,8 @@ describe('UploadContent', () => {
 
     const created = Array.from(state.contents.values()).find((c) => c.title === 'New Article')
     expect(created).toBeDefined()
-    expect(created!.status).toBe('published')
+    // New workflow: 'Submit for Review' goes to 'pending', not 'published'.
+    expect(created!.status).toBe('pending')
     expect(created!.subject).toBe('Math')
     expect(created!.grade_level).toBe('Junior Secondary 2')
   })

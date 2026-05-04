@@ -29,7 +29,7 @@ export interface ApiError {
 }
 
 export type ContentType = 'video' | 'audio' | 'article'
-export type ContentStatus = 'draft' | 'published'
+export type ContentStatus = 'draft' | 'pending' | 'published' | 'rejected'
 
 export interface ExternalLink {
   label: string

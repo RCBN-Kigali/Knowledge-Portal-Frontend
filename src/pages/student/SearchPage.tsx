@@ -32,12 +32,12 @@ const RECENT_KEY = 'kp.recentSearches'
 const MAX_RECENT = 5
 
 const careerPaths = [
-  { id: 'medicine', subject: 'Career', name: 'Medicine & Healthcare', icon: Stethoscope, color: 'from-rose-400 to-pink-500', count: 124, description: 'Doctors, nurses, pharmacists' },
-  { id: 'engineering', subject: 'Career', name: 'Engineering', icon: Cog, color: 'from-orange-400 to-amber-500', count: 98, description: 'Civil, mechanical, electrical' },
-  { id: 'technology', subject: 'Career', name: 'Technology & IT', icon: Laptop, color: 'from-blue-400 to-indigo-500', count: 156, description: 'Software, data, cybersecurity' },
-  { id: 'teaching', subject: 'Career', name: 'Education & Teaching', icon: BookOpen, color: 'from-green-400 to-emerald-500', count: 87, description: 'Teachers, professors, tutors' },
-  { id: 'law', subject: 'Career', name: 'Law & Justice', icon: Scale, color: 'from-purple-400 to-violet-500', count: 65, description: 'Lawyers, judges, paralegals' },
-  { id: 'arts', subject: 'Career', name: 'Creative Arts', icon: Palette, color: 'from-pink-400 to-rose-500', count: 72, description: 'Design, music, writing' },
+  { id: 'medicine', subject: 'Career', name: 'Medicine & Healthcare', icon: Stethoscope, color: 'from-rose-400 to-pink-500', description: 'Doctors, nurses, pharmacists' },
+  { id: 'engineering', subject: 'Career', name: 'Engineering', icon: Cog, color: 'from-orange-400 to-amber-500', description: 'Civil, mechanical, electrical' },
+  { id: 'technology', subject: 'Career', name: 'Technology & IT', icon: Laptop, color: 'from-blue-400 to-indigo-500', description: 'Software, data, cybersecurity' },
+  { id: 'teaching', subject: 'Career', name: 'Education & Teaching', icon: BookOpen, color: 'from-green-400 to-emerald-500', description: 'Teachers, professors, tutors' },
+  { id: 'law', subject: 'Career', name: 'Law & Justice', icon: Scale, color: 'from-purple-400 to-violet-500', description: 'Lawyers, judges, paralegals' },
+  { id: 'arts', subject: 'Career', name: 'Creative Arts', icon: Palette, color: 'from-pink-400 to-rose-500', description: 'Design, music, writing' },
 ]
 
 const subjectCards = [
@@ -266,9 +266,8 @@ export default function SearchPage() {
                           <p className="text-sm opacity-90">{career.description}</p>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between pt-3 border-t border-white/20">
-                        <span className="text-sm opacity-90">{career.count} lessons</span>
-                        <span className="text-sm opacity-90">→</span>
+                      <div className="flex items-center justify-end pt-3 border-t border-white/20">
+                        <span className="text-sm opacity-90">Explore →</span>
                       </div>
                     </Link>
                   )

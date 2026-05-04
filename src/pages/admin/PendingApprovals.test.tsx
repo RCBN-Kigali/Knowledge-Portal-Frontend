@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { screen, waitFor } from '@testing-library/react'
 import PendingApprovals from './PendingApprovals'
 import { renderWithProviders } from '../../test/test-utils'
-import { seedUser, state } from '../../test/msw-server'
+import { seedContent, seedUser, state } from '../../test/msw-server'
 
 const adminAuth = () => {
   const u = seedUser({ id: 'admin-1', role: 'admin', name: 'A', email: 'a@test.example' })
@@ -13,89 +13,77 @@ const adminAuth = () => {
   }
 }
 
-describe('PendingApprovals', () => {
-  it('lists pending teacher applications with their school and subjects', async () => {
-    seedUser({
+describe('PendingApprovals (content review)', () => {
+  it('lists content awaiting admin review with subject + grade metadata', async () => {
+    seedContent({
       id: 'pending-1',
-      role: 'teacher',
-      name: 'Claudine Uwimana',
-      email: 'c@test.example',
-      school: 'Paysannat L B',
-      subjects: ['Mathematics'],
-      approval_status: 'pending',
-      is_active: false,
+      title: 'Photosynthesis review me',
+      status: 'pending',
+      subject: 'Science',
+      grade_level: 'Grade 9',
+      hashtags: ['Biology'],
     })
 
     renderWithProviders(<PendingApprovals />, { authAs: adminAuth() })
 
-    expect(await screen.findByText('Claudine Uwimana')).toBeInTheDocument()
-    expect(screen.getByText('Paysannat L B')).toBeInTheDocument()
-    expect(screen.getByText('Mathematics')).toBeInTheDocument()
+    expect(await screen.findByText('Photosynthesis review me')).toBeInTheDocument()
+    expect(screen.getByText('Science')).toBeInTheDocument()
+    expect(screen.getByText('Grade 9')).toBeInTheDocument()
+    expect(screen.getByText('#Biology')).toBeInTheDocument()
   })
 
-  it('approves a teacher and removes them from the list', async () => {
+  it('approves pending content and sets status to published', async () => {
     const user = userEvent.setup()
-    seedUser({
-      id: 'pending-1',
-      role: 'teacher',
-      name: 'To Approve',
-      email: 't1@test.example',
-      school: 'Paysannat L A',
-      subjects: ['Mathematics'],
-      approval_status: 'pending',
-      is_active: false,
-    })
+    seedContent({ id: 'p1', title: 'Approve me', status: 'pending' })
 
     renderWithProviders(<PendingApprovals />, { authAs: adminAuth() })
 
-    expect(await screen.findByText('To Approve')).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: /approve/i }))
-    // Confirmation modal -> click confirm.
+    expect(await screen.findByText('Approve me')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /^approve$/i }))
     await user.click(screen.getByRole('button', { name: /^confirm$/i }))
 
     await waitFor(() => {
-      expect(state.users.get('pending-1')?.approval_status).toBe('approved')
-      expect(state.users.get('pending-1')?.is_active).toBe(true)
+      expect(state.contents.get('p1')?.status).toBe('published')
     })
   })
 
-  it('shows the empty state when no teachers are pending', async () => {
+  it('rejects pending content and sets status to rejected', async () => {
+    const user = userEvent.setup()
+    seedContent({ id: 'p2', title: 'Reject me', status: 'pending' })
+
+    renderWithProviders(<PendingApprovals />, { authAs: adminAuth() })
+
+    expect(await screen.findByText('Reject me')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /^reject$/i }))
+    await user.click(screen.getByRole('button', { name: /^confirm$/i }))
+
+    await waitFor(() => {
+      expect(state.contents.get('p2')?.status).toBe('rejected')
+    })
+  })
+
+  it('shows empty state when no content is pending', async () => {
+    seedContent({ id: 'pub', title: 'Already public', status: 'published' })
+
     renderWithProviders(<PendingApprovals />, { authAs: adminAuth() })
 
     expect(await screen.findByText(/all caught up/i)).toBeInTheDocument()
+    expect(screen.queryByText('Already public')).not.toBeInTheDocument()
   })
 
-  it('filters the list with the search box', async () => {
+  it('filters by search query', async () => {
     const user = userEvent.setup()
-    seedUser({
-      id: 'pending-1',
-      role: 'teacher',
-      name: 'Alice Anderson',
-      email: 'a@test.example',
-      school: 'Paysannat L A',
-      subjects: ['Math'],
-      approval_status: 'pending',
-      is_active: false,
-    })
-    seedUser({
-      id: 'pending-2',
-      role: 'teacher',
-      name: 'Bob Brown',
-      email: 'b@test.example',
-      school: 'Paysannat L B',
-      subjects: ['English'],
-      approval_status: 'pending',
-      is_active: false,
-    })
+    seedContent({ id: 'm1', title: 'Math One', status: 'pending', subject: 'Math' })
+    seedContent({ id: 'b1', title: 'Biology Basics', status: 'pending', subject: 'Science' })
 
     renderWithProviders(<PendingApprovals />, { authAs: adminAuth() })
 
-    expect(await screen.findByText('Alice Anderson')).toBeInTheDocument()
-    expect(screen.getByText('Bob Brown')).toBeInTheDocument()
+    expect(await screen.findByText('Math One')).toBeInTheDocument()
+    expect(screen.getByText('Biology Basics')).toBeInTheDocument()
 
-    await user.type(screen.getByPlaceholderText(/search by name/i), 'alice')
+    await user.type(screen.getByPlaceholderText(/search by title/i), 'biology')
 
-    expect(screen.getByText('Alice Anderson')).toBeInTheDocument()
-    expect(screen.queryByText('Bob Brown')).not.toBeInTheDocument()
+    expect(screen.getByText('Biology Basics')).toBeInTheDocument()
+    expect(screen.queryByText('Math One')).not.toBeInTheDocument()
   })
 })

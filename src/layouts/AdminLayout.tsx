@@ -5,7 +5,7 @@ import { adminApi } from '../api/admin'
 
 const navItems = [
   { path: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { path: '/admin/approvals', icon: Clock, label: 'Approvals', badgeKey: 'pending' as const },
+  { path: '/admin/approvals', icon: Clock, label: 'Reviews', badgeKey: 'pending' as const },
   { path: '/admin/teachers', icon: UserCog, label: 'Teachers' },
   { path: '/admin/announcements', icon: Megaphone, label: 'Announcements' },
   { path: '/admin/settings', icon: Settings, label: 'Settings' },
@@ -32,7 +32,7 @@ export default function AdminLayout() {
           {navItems.map((item) => {
             const Icon = item.icon
             const isActive = location.pathname === item.path
-            const badge = item.badgeKey === 'pending' ? stats?.pending_approvals ?? 0 : 0
+            const badge = item.badgeKey === 'pending' ? stats?.pending_content ?? 0 : 0
             return (
               <Link
                 key={item.path}
@@ -68,7 +68,7 @@ export default function AdminLayout() {
             {navItems.map((item) => {
               const Icon = item.icon
               const isActive = location.pathname === item.path
-              const badge = item.badgeKey === 'pending' ? stats?.pending_approvals ?? 0 : 0
+              const badge = item.badgeKey === 'pending' ? stats?.pending_content ?? 0 : 0
               return (
                 <Link
                   key={item.path}

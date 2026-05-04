@@ -57,7 +57,7 @@ export default function EditContent() {
   }, [existing])
 
   const updateMut = useMutation({
-    mutationFn: (status: 'draft' | 'published' | undefined) =>
+    mutationFn: (status: 'draft' | 'pending' | undefined) =>
       teacherContentApi.update(contentId, {
         title,
         description,
@@ -347,15 +347,20 @@ export default function EditContent() {
             >
               {updateMut.isPending ? 'Saving…' : 'Update Content'}
             </button>
-            {existing.status === 'draft' && (
+            {(existing.status === 'draft' || existing.status === 'rejected') && (
               <button
                 type="button"
-                onClick={() => updateMut.mutate('published')}
+                onClick={() => updateMut.mutate('pending')}
                 disabled={!title.trim() || updateMut.isPending}
                 className="w-full px-6 py-4 bg-secondary text-secondary-foreground rounded-xl hover:shadow-lg transition-all disabled:opacity-50 font-medium"
               >
-                Publish Now
+                {existing.status === 'rejected' ? 'Resubmit for Review' : 'Submit for Review'}
               </button>
+            )}
+            {existing.status === 'pending' && (
+              <div className="w-full px-6 py-4 bg-amber-50 border-2 border-amber-200 text-amber-800 rounded-xl text-center text-sm">
+                This content is awaiting administrator review.
+              </div>
             )}
             <button
               type="button"

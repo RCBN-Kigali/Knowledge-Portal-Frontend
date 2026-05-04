@@ -19,7 +19,9 @@ export interface TeacherContentUpdateInput {
   description?: string
   hashtags?: string[]
   external_links?: ExternalLink[]
-  status?: 'draft' | 'published'
+  // Teachers may transition content to 'draft' or 'pending'. Admin
+  // endpoints handle 'published' and 'rejected'.
+  status?: 'draft' | 'pending'
   subject?: string
   grade_level?: string
   duration_minutes?: number | null
