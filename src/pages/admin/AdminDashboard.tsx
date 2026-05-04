@@ -26,7 +26,7 @@ export default function AdminDashboard() {
             value={stats?.pending_content ?? 0}
             label="Pending Reviews"
             icon={<Clock className="w-6 h-6" />}
-            tone="bg-amber-100 text-amber-600"
+            tone="bg-muted text-muted-foreground"
             isLoading={isLoading}
           />
           <StatCard
@@ -56,14 +56,14 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <Link
             to="/admin/approvals"
-            className="bg-gradient-to-br from-amber-50 to-amber-100/50 border-2 border-amber-200 rounded-2xl p-8 hover:shadow-lg transition-all group relative"
+            className="bg-gradient-to-br from-muted to-muted/40 border-2 border-border rounded-2xl p-8 hover:shadow-lg transition-all group relative"
           >
             {(stats?.pending_content ?? 0) > 0 && (
-              <div className="absolute top-4 right-4 min-w-[2rem] h-8 px-2 rounded-full bg-amber-600 text-white flex items-center justify-center text-sm font-bold">
+              <div className="absolute top-4 right-4 min-w-[2rem] h-8 px-2 rounded-full bg-foreground text-background flex items-center justify-center text-sm font-bold">
                 {stats!.pending_content}
               </div>
             )}
-            <div className="w-16 h-16 rounded-2xl bg-amber-200 text-amber-700 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <div className="w-16 h-16 rounded-2xl bg-muted text-foreground flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <Clock className="w-8 h-8" />
             </div>
             <h3 className="mb-2 text-xl font-semibold">Pending Reviews</h3>

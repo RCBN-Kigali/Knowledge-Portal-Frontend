@@ -44,7 +44,7 @@ export default function AdminLayout() {
                 <Icon className={`w-6 h-6 mb-1 ${isActive ? 'fill-current' : ''}`} />
                 <span className="text-xs">{item.label}</span>
                 {badge > 0 && (
-                  <span className="absolute top-1 right-1 bg-amber-600 text-white text-[10px] px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+                  <span className="absolute top-1 right-1 bg-foreground text-background text-[10px] px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
                     {badge}
                   </span>
                 )}
@@ -80,7 +80,7 @@ export default function AdminLayout() {
                   <Icon className="w-5 h-5" />
                   <span className="flex-1">{item.label}</span>
                   {badge > 0 && (
-                    <span className="bg-amber-600 text-white text-xs px-2 py-0.5 rounded-full min-w-[24px] text-center">
+                    <span className="bg-foreground text-background text-xs px-2 py-0.5 rounded-full min-w-[24px] text-center">
                       {badge}
                     </span>
                   )}

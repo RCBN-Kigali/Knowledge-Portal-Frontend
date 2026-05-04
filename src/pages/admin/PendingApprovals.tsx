@@ -77,7 +77,7 @@ export default function PendingApprovals() {
                 Review content submitted by teachers before it appears to students
               </p>
             </div>
-            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-amber-100 text-amber-600">
+            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-muted text-foreground">
               <span className="font-bold">{items.length}</span>
             </div>
           </div>
