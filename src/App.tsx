@@ -9,6 +9,7 @@ import PublicOnlyRoute from './routes/PublicOnlyRoute'
 import RoleGuard from './routes/RoleGuard'
 
 import StudentLayout from './layouts/StudentLayout'
+import TeacherLayout from './layouts/TeacherLayout'
 
 import Welcome from './pages/Welcome'
 import Login from './pages/auth/Login'
@@ -31,6 +32,10 @@ import StudentProgress from './pages/student/Progress'
 
 import TeacherDashboard from './pages/teacher/TeacherDashboard'
 import TeacherPending from './pages/teacher/TeacherPending'
+import UploadContent from './pages/teacher/UploadContent'
+import EditContent from './pages/teacher/EditContent'
+import TeacherComments from './pages/teacher/TeacherComments'
+import TeacherProfile from './pages/teacher/TeacherProfile'
 import AdminDashboard from './pages/admin/AdminDashboard'
 
 export default function App() {
@@ -71,15 +76,22 @@ export default function App() {
             </Route>
 
             <Route
-              path="/teacher/dashboard"
+              path="/teacher"
               element={
                 <ProtectedRoute>
                   <RoleGuard roles={['teacher']}>
-                    <TeacherDashboard />
+                    <TeacherLayout />
                   </RoleGuard>
                 </ProtectedRoute>
               }
-            />
+            >
+              <Route index element={<Navigate to="/teacher/dashboard" replace />} />
+              <Route path="dashboard" element={<TeacherDashboard />} />
+              <Route path="upload" element={<UploadContent />} />
+              <Route path="content/:contentId/edit" element={<EditContent />} />
+              <Route path="comments" element={<TeacherComments />} />
+              <Route path="profile" element={<TeacherProfile />} />
+            </Route>
             <Route
               path="/admin/dashboard"
               element={
