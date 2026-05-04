@@ -1,7 +1,7 @@
 import { createContext, useState, useCallback, useEffect, type ReactNode } from 'react'
-import { authApi } from '../api/auth'
+import { authApi, type RegisterPayload } from '../api/auth'
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, USER_KEY } from '../api/client'
-import type { User, UserRole } from '../types'
+import type { User } from '../types'
 
 interface AuthContextType {
   user: User | null
@@ -9,7 +9,7 @@ interface AuthContextType {
   isAuthenticated: boolean
   error: string | null
   login: (email: string, password: string) => Promise<User>
-  register: (email: string, password: string, name: string, role: UserRole) => Promise<User>
+  register: (payload: RegisterPayload) => Promise<User>
   logout: () => Promise<void>
   clearError: () => void
 }
@@ -63,13 +63,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [])
 
-  const register = useCallback(async (
-    email: string, password: string, name: string, role: UserRole
-  ): Promise<User> => {
+  const register = useCallback(async (payload: RegisterPayload): Promise<User> => {
     setError(null)
     setIsLoading(true)
     try {
-      return await authApi.register(email, password, name, role)
+      return await authApi.register(payload)
     } catch (err: any) {
       const detail = err?.response?.data?.detail
       const msg = typeof detail === 'string' ? detail : 'Registration failed'

@@ -23,7 +23,11 @@ import Announcements from './pages/student/Announcements'
 import AnnouncementDetail from './pages/student/AnnouncementDetail'
 import Profile from './pages/student/Profile'
 import CareerExplorer from './pages/student/CareerExplorer'
-import ComingSoon from './pages/student/ComingSoon'
+import Courses from './pages/student/Courses'
+import CourseDetail from './pages/student/CourseDetail'
+import Library from './pages/student/Library'
+import MyLearning from './pages/student/MyLearning'
+import StudentProgress from './pages/student/Progress'
 
 import TeacherDashboard from './pages/teacher/TeacherDashboard'
 import TeacherPending from './pages/teacher/TeacherPending'
@@ -59,42 +63,11 @@ export default function App() {
               <Route path="announcements/:announcementId" element={<AnnouncementDetail />} />
               <Route path="notifications" element={<Notifications />} />
               <Route path="profile" element={<Profile />} />
-              <Route
-                path="courses"
-                element={
-                  <ComingSoon
-                    title="Courses"
-                    description="Structured courses are coming soon. For now, browse individual lessons from the Discover feed."
-                  />
-                }
-              />
-              <Route
-                path="my-learning"
-                element={
-                  <ComingSoon
-                    title="My Learning"
-                    description="Personal learning history and saved lessons will appear here once the feature is enabled."
-                  />
-                }
-              />
-              <Route
-                path="library"
-                element={
-                  <ComingSoon
-                    title="Library"
-                    description="Bookmarked content and downloads will live here. We're working on it."
-                  />
-                }
-              />
-              <Route
-                path="progress"
-                element={
-                  <ComingSoon
-                    title="Progress"
-                    description="Track your learning progress here when course tracking ships."
-                  />
-                }
-              />
+              <Route path="courses" element={<Courses />} />
+              <Route path="courses/:courseId" element={<CourseDetail />} />
+              <Route path="my-learning" element={<MyLearning />} />
+              <Route path="library" element={<Library />} />
+              <Route path="progress" element={<StudentProgress />} />
             </Route>
 
             <Route

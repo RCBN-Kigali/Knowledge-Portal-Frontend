@@ -19,12 +19,16 @@ export default function Login() {
     setError('')
     try {
       const user = await login(formData.email, formData.password)
-      // Teachers awaiting approval are blocked at the backend (HTTP 403) so we
-      // shouldn't reach here for pending teachers; just route by role.
       const from = (location.state as { from?: string } | null)?.from
       navigate(from && from !== '/login' ? from : roleHome(user.role), { replace: true })
     } catch (err: any) {
-      setError(err?.message || 'Login failed')
+      const msg = err?.message || 'Login failed'
+      // Backend returns "Teacher account not approved" for pending teachers.
+      if (msg.toLowerCase().includes('teacher') && msg.toLowerCase().includes('not approved')) {
+        navigate('/teacher/pending', { replace: true })
+        return
+      }
+      setError(msg)
     }
   }
 
@@ -89,6 +93,15 @@ export default function Login() {
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
+              </div>
+
+              <div className="text-right">
+                <button
+                  type="button"
+                  className="text-sm text-primary hover:underline"
+                >
+                  Forgot password?
+                </button>
               </div>
 
               <button

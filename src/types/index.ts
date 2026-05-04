@@ -84,10 +84,16 @@ export interface CommentItem {
   id: string
   content_id: string
   user_id: string
+  user_name: string | null
+  user_role: UserRole | null
   text: string
   parent_comment_id: string | null
   is_unread: boolean
   created_at: string
+}
+
+export interface TeacherInboxItem extends CommentItem {
+  content_title: string | null
 }
 
 export interface CommentPage {
@@ -95,6 +101,13 @@ export interface CommentPage {
   limit: number
   total: number
   items: CommentItem[]
+}
+
+export interface TeacherInboxPage {
+  page: number
+  limit: number
+  total: number
+  items: TeacherInboxItem[]
 }
 
 export type AnnouncementPriority = 'normal' | 'high'
