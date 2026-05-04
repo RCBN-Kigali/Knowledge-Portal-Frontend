@@ -1,93 +1,66 @@
-import type { ReactNode } from 'react'
-import clsx from 'clsx'
+"use client";
 
-export interface Tab {
-  id: string
-  label: string
-  count?: number
-  disabled?: boolean
-}
+import * as React from "react";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
 
-export interface TabsProps {
-  tabs: Tab[]
-  activeTab: string
-  onChange: (tabId: string) => void
-  variant?: 'underline' | 'pills'
-  className?: string
-}
+import { cn } from "./utils";
 
-export interface TabPanelProps {
-  id: string
-  activeTab: string
-  children: ReactNode
-}
-
-function Tabs({ tabs, activeTab, onChange, variant = 'underline', className }: TabsProps) {
+function Tabs({
+  className,
+  ...props
+}: React.ComponentProps<typeof TabsPrimitive.Root>) {
   return (
-    <div
-      role="tablist"
-      className={clsx(
-        'flex',
-        variant === 'underline' && 'border-b border-gray-200 gap-0',
-        variant === 'pills' && 'gap-2 bg-gray-100 p-1 rounded-lg',
-        className
+    <TabsPrimitive.Root
+      data-slot="tabs"
+      className={cn("flex flex-col gap-2", className)}
+      {...props}
+    />
+  );
+}
+
+function TabsList({
+  className,
+  ...props
+}: React.ComponentProps<typeof TabsPrimitive.List>) {
+  return (
+    <TabsPrimitive.List
+      data-slot="tabs-list"
+      className={cn(
+        "bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-xl p-[3px] flex",
+        className,
       )}
-    >
-      {tabs.map((tab) => {
-        const isActive = tab.id === activeTab
-
-        return (
-          <button
-            key={tab.id}
-            role="tab"
-            type="button"
-            aria-selected={isActive}
-            aria-controls={`tabpanel-${tab.id}`}
-            disabled={tab.disabled}
-            onClick={() => onChange(tab.id)}
-            className={clsx(
-              'inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-inset min-h-[44px] disabled:opacity-50 disabled:cursor-not-allowed',
-              variant === 'underline' && [
-                'border-b-2 -mb-px',
-                isActive
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-              ],
-              variant === 'pills' && [
-                'rounded-md',
-                isActive
-                  ? 'bg-white text-primary-600 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700',
-              ]
-            )}
-          >
-            {tab.label}
-            {tab.count !== undefined && (
-              <span
-                className={clsx(
-                  'inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-xs font-medium',
-                  isActive
-                    ? 'bg-primary-100 text-primary-700'
-                    : 'bg-gray-200 text-gray-600'
-                )}
-              >
-                {tab.count}
-              </span>
-            )}
-          </button>
-        )
-      })}
-    </div>
-  )
+      {...props}
+    />
+  );
 }
 
-function TabPanel({ id, activeTab, children }: TabPanelProps) {
-  if (id !== activeTab) return null
+function TabsTrigger({
+  className,
+  ...props
+}: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
   return (
-    <div role="tabpanel" id={`tabpanel-${id}`} aria-labelledby={id}>
-      {children}
-    </div>
-  )
+    <TabsPrimitive.Trigger
+      data-slot="tabs-trigger"
+      className={cn(
+        "data-[state=active]:bg-card dark:data-[state=active]:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-xl border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
-export default Object.assign(Tabs, { Panel: TabPanel })
+function TabsContent({
+  className,
+  ...props
+}: React.ComponentProps<typeof TabsPrimitive.Content>) {
+  return (
+    <TabsPrimitive.Content
+      data-slot="tabs-content"
+      className={cn("flex-1 outline-none", className)}
+      {...props}
+    />
+  );
+}
+
+export { Tabs, TabsList, TabsTrigger, TabsContent };

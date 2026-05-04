@@ -1,79 +1,71 @@
-import { Bell } from 'lucide-react'
-import { Card, Skeleton, EmptyState } from '../../components/ui'
-import AnnouncementCard from '../../features/student/components/AnnouncementCard'
-import { useAnnouncements, useMarkAnnouncementRead } from '../../features/student/hooks/useAnnouncements'
-import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
+import { Megaphone } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { announcementsApi } from '../../api/announcements'
+import { Skeleton } from '../../components/ui/skeleton'
+import { formatDistanceToNow } from 'date-fns'
 
-function Announcements() {
-  const { data: announcements, isLoading } = useAnnouncements()
-  const markReadMutation = useMarkAnnouncementRead()
-
-  // Group by date
-  const groupedAnnouncements = useMemo(() => {
-    if (!Array.isArray(announcements)) return {}
-    const groups: Record<string, typeof announcements> = {}
-    for (const a of announcements) {
-      const date = new Date(a.createdAt).toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      })
-      if (!groups[date]) groups[date] = []
-      groups[date].push(a)
-    }
-    return groups
-  }, [announcements])
-
-  const dates = Object.keys(groupedAnnouncements)
-
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <Skeleton variant="text" lines={1} width="200px" />
-        {[1, 2, 3].map(i => <Skeleton key={i} variant="card" height="100px" />)}
-      </div>
-    )
-  }
+export default function Announcements() {
+  const { data, isLoading } = useQuery({
+    queryKey: ['announcements'],
+    queryFn: () => announcementsApi.list({ limit: 50 }),
+  })
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Announcements</h1>
-        <p className="text-gray-500">Stay updated with the latest news</p>
-      </div>
-
-      {dates.length === 0 ? (
-        <Card className="p-12">
-          <EmptyState
-            icon={Bell}
-            title="No announcements"
-            description="You're all caught up! Check back later for updates."
-          />
-        </Card>
-      ) : (
-        <div className="space-y-8">
-          {dates.map(date => (
-            <div key={date}>
-              <h2 className="text-sm font-medium text-gray-500 mb-3">{date}</h2>
-              <div className="space-y-3">
-                {groupedAnnouncements[date].map(announcement => (
-                  <AnnouncementCard
-                    key={announcement.id}
-                    announcement={announcement}
-                    onExpand={() => {
-                      if (!announcement.isRead) {
-                        markReadMutation.mutate(announcement.id)
-                      }
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
+    <div className="min-h-screen bg-background">
+      <header className="bg-card border-b border-border sticky top-0 z-40">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4">
+          <h2 className="text-xl font-semibold">Announcements</h2>
         </div>
-      )}
+      </header>
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+        {isLoading ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-24 w-full rounded-xl" />)}
+          </div>
+        ) : data && data.items.length > 0 ? (
+          <div className="space-y-3">
+            {data.items.map((a) => (
+              <Link
+                key={a.id}
+                to={`/student/announcements/${a.id}`}
+                className={`block p-4 border rounded-xl hover:shadow-md transition-all ${
+                  a.is_read ? 'bg-card border-border' : 'bg-primary/5 border-primary/20'
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                    a.priority === 'high' ? 'bg-destructive/10 text-destructive' : 'bg-secondary/10 text-secondary'
+                  }`}>
+                    <Megaphone className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className={`${a.is_read ? '' : 'font-medium'}`}>{a.title}</p>
+                      {a.priority === 'high' && (
+                        <span className="text-xs bg-destructive/10 text-destructive px-2 py-0.5 rounded-full">High</span>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{a.content_preview}</p>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {formatDistanceToNow(new Date(a.created_at), { addSuffix: true })}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 rounded-full bg-muted mx-auto mb-4 flex items-center justify-center">
+              <Megaphone className="w-8 h-8 text-muted-foreground" />
+            </div>
+            <h3 className="font-medium mb-1">No announcements yet</h3>
+            <p className="text-muted-foreground">Check back later for school news.</p>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
-
-export default Announcements

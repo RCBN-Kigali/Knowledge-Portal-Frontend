@@ -1,187 +1,189 @@
-import { forwardRef, useId, useState, useRef, useEffect } from 'react'
-import clsx from 'clsx'
-import { ChevronDown, Search, X } from 'lucide-react'
+"use client";
 
-export interface SelectOption {
-  value: string
-  label: string
+import * as React from "react";
+import * as SelectPrimitive from "@radix-ui/react-select";
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+} from "lucide-react";
+
+import { cn } from "./utils";
+
+function Select({
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Root>) {
+  return <SelectPrimitive.Root data-slot="select" {...props} />;
 }
 
-export interface SelectProps {
-  label?: string
-  error?: string
-  helperText?: string
-  options?: SelectOption[]
-  placeholder?: string
-  required?: boolean
-  disabled?: boolean
-  searchable?: boolean
-  value?: string
-  onChange?: (value: string) => void
-  className?: string
+function SelectGroup({
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Group>) {
+  return <SelectPrimitive.Group data-slot="select-group" {...props} />;
 }
 
-// Native select (default, non-searchable)
-const NativeSelect = forwardRef<HTMLSelectElement, SelectProps>(function NativeSelect(
-  { label, error, helperText, options = [], placeholder = 'Select an option', required, disabled, value, onChange, className },
-  ref
-) {
-  const id = useId()
-  const hasError = Boolean(error)
+function SelectValue({
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Value>) {
+  return <SelectPrimitive.Value data-slot="select-value" {...props} />;
+}
 
+function SelectTrigger({
+  className,
+  size = "default",
+  children,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
+  size?: "sm" | "default";
+}) {
   return (
-    <div className="space-y-1">
-      {label && (
-        <label htmlFor={id} className="block text-sm font-medium text-gray-700">
-          {label}
-          {required && <span className="text-danger-500 ml-1">*</span>}
-        </label>
+    <SelectPrimitive.Trigger
+      data-slot="select-trigger"
+      data-size={size}
+      className={cn(
+        "border-input data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-full items-center justify-between gap-2 rounded-md border bg-input-background px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        className,
       )}
-      <div className="relative">
-        <select
-          ref={ref}
-          id={id}
-          disabled={disabled}
-          required={required}
-          aria-invalid={hasError}
-          value={value}
-          onChange={(e) => onChange?.(e.target.value)}
-          className={clsx(
-            'w-full px-4 py-3 border rounded-lg text-base bg-white appearance-none cursor-pointer focus:outline-none focus:ring-2 disabled:bg-gray-100 min-h-[44px] pr-10',
-            hasError ? 'border-danger-500 focus:ring-danger-500' : 'border-gray-300 focus:ring-primary-500',
-            className
-          )}
-        >
-          {placeholder && <option value="" disabled>{placeholder}</option>}
-          {options.map((opt) => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
-        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-      </div>
-      {hasError && <p className="text-sm text-danger-600" role="alert">{error}</p>}
-      {helperText && !hasError && <p className="text-sm text-gray-500">{helperText}</p>}
-    </div>
-  )
-})
+      {...props}
+    >
+      {children}
+      <SelectPrimitive.Icon asChild>
+        <ChevronDownIcon className="size-4 opacity-50" />
+      </SelectPrimitive.Icon>
+    </SelectPrimitive.Trigger>
+  );
+}
 
-// Searchable select
-function SearchableSelect({
-  label, error, helperText, options = [], placeholder = 'Select an option', required, disabled, value, onChange, className,
-}: SelectProps) {
-  const id = useId()
-  const hasError = Boolean(error)
-  const [isOpen, setIsOpen] = useState(false)
-  const [search, setSearch] = useState('')
-  const ref = useRef<HTMLDivElement>(null)
-
-  const selectedOption = options.find((opt) => opt.value === value)
-  const filtered = options.filter((opt) =>
-    opt.label.toLowerCase().includes(search.toLowerCase())
-  )
-
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setIsOpen(false)
-        setSearch('')
-      }
-    }
-    if (isOpen) document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [isOpen])
-
+function SelectContent({
+  className,
+  children,
+  position = "popper",
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Content>) {
   return (
-    <div className="space-y-1">
-      {label && (
-        <label htmlFor={id} className="block text-sm font-medium text-gray-700">
-          {label}
-          {required && <span className="text-danger-500 ml-1">*</span>}
-        </label>
-      )}
-      <div ref={ref} className="relative">
-        <button
-          id={id}
-          type="button"
-          disabled={disabled}
-          aria-invalid={hasError}
-          aria-expanded={isOpen}
-          onClick={() => setIsOpen(!isOpen)}
-          className={clsx(
-            'w-full px-4 py-3 border rounded-lg text-base text-left bg-white focus:outline-none focus:ring-2 disabled:bg-gray-100 disabled:cursor-not-allowed min-h-[44px] pr-10',
-            hasError ? 'border-danger-500 focus:ring-danger-500' : 'border-gray-300 focus:ring-primary-500',
-            className
-          )}
-        >
-          <span className={selectedOption ? 'text-gray-900' : 'text-gray-500'}>
-            {selectedOption?.label || placeholder}
-          </span>
-        </button>
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-          {value && (
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); onChange?.(''); }}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
-          <ChevronDown className={clsx('w-5 h-5 text-gray-400 transition-transform', isOpen && 'rotate-180')} />
-        </div>
-
-        {isOpen && (
-          <div className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg">
-            <div className="p-2 border-b border-gray-100">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search..."
-                  className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  autoFocus
-                />
-              </div>
-            </div>
-            <div className="max-h-60 overflow-y-auto py-1">
-              {filtered.length === 0 ? (
-                <p className="px-4 py-3 text-sm text-gray-500">No options found</p>
-              ) : (
-                filtered.map((opt) => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => {
-                      onChange?.(opt.value)
-                      setIsOpen(false)
-                      setSearch('')
-                    }}
-                    className={clsx(
-                      'w-full px-4 py-2.5 text-left text-sm hover:bg-gray-100',
-                      opt.value === value ? 'bg-primary-50 text-primary-700 font-medium' : 'text-gray-700'
-                    )}
-                  >
-                    {opt.label}
-                  </button>
-                ))
-              )}
-            </div>
-          </div>
+    <SelectPrimitive.Portal>
+      <SelectPrimitive.Content
+        data-slot="select-content"
+        className={cn(
+          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border shadow-md",
+          position === "popper" &&
+            "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
+          className,
         )}
-      </div>
-      {hasError && <p className="text-sm text-danger-600" role="alert">{error}</p>}
-      {helperText && !hasError && <p className="text-sm text-gray-500">{helperText}</p>}
-    </div>
-  )
+        position={position}
+        {...props}
+      >
+        <SelectScrollUpButton />
+        <SelectPrimitive.Viewport
+          className={cn(
+            "p-1",
+            position === "popper" &&
+              "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1",
+          )}
+        >
+          {children}
+        </SelectPrimitive.Viewport>
+        <SelectScrollDownButton />
+      </SelectPrimitive.Content>
+    </SelectPrimitive.Portal>
+  );
 }
 
-const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(props, ref) {
-  if (props.searchable) {
-    return <SearchableSelect {...props} />
-  }
-  return <NativeSelect ref={ref} {...props} />
-})
+function SelectLabel({
+  className,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Label>) {
+  return (
+    <SelectPrimitive.Label
+      data-slot="select-label"
+      className={cn("text-muted-foreground px-2 py-1.5 text-xs", className)}
+      {...props}
+    />
+  );
+}
 
-export default Select
+function SelectItem({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Item>) {
+  return (
+    <SelectPrimitive.Item
+      data-slot="select-item"
+      className={cn(
+        "focus:bg-accent focus:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        className,
+      )}
+      {...props}
+    >
+      <span className="absolute right-2 flex size-3.5 items-center justify-center">
+        <SelectPrimitive.ItemIndicator>
+          <CheckIcon className="size-4" />
+        </SelectPrimitive.ItemIndicator>
+      </span>
+      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+    </SelectPrimitive.Item>
+  );
+}
+
+function SelectSeparator({
+  className,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Separator>) {
+  return (
+    <SelectPrimitive.Separator
+      data-slot="select-separator"
+      className={cn("bg-border pointer-events-none -mx-1 my-1 h-px", className)}
+      {...props}
+    />
+  );
+}
+
+function SelectScrollUpButton({
+  className,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.ScrollUpButton>) {
+  return (
+    <SelectPrimitive.ScrollUpButton
+      data-slot="select-scroll-up-button"
+      className={cn(
+        "flex cursor-default items-center justify-center py-1",
+        className,
+      )}
+      {...props}
+    >
+      <ChevronUpIcon className="size-4" />
+    </SelectPrimitive.ScrollUpButton>
+  );
+}
+
+function SelectScrollDownButton({
+  className,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.ScrollDownButton>) {
+  return (
+    <SelectPrimitive.ScrollDownButton
+      data-slot="select-scroll-down-button"
+      className={cn(
+        "flex cursor-default items-center justify-center py-1",
+        className,
+      )}
+      {...props}
+    >
+      <ChevronDownIcon className="size-4" />
+    </SelectPrimitive.ScrollDownButton>
+  );
+}
+
+export {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+};

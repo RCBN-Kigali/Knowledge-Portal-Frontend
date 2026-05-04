@@ -1,68 +1,46 @@
-import type { ReactNode } from 'react'
-import clsx from 'clsx'
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
 
-export interface BadgeProps {
-  children: ReactNode
-  variant?: 'gray' | 'primary' | 'success' | 'warning' | 'danger'
-  size?: 'sm' | 'md' | 'lg'
-  dot?: boolean
-  className?: string
-}
+import { cn } from "./utils";
 
-const variants: Record<string, string> = {
-  gray: 'bg-gray-100 text-gray-700',
-  primary: 'bg-primary-100 text-primary-700',
-  success: 'bg-success-100 text-success-700',
-  warning: 'bg-warning-100 text-warning-700',
-  danger: 'bg-danger-100 text-danger-700',
-}
+const badgeVariants = cva(
+  "inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden",
+  {
+    variants: {
+      variant: {
+        default:
+          "border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
+        secondary:
+          "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
+        destructive:
+          "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+        outline:
+          "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  },
+);
 
-const dotColors: Record<string, string> = {
-  gray: 'bg-gray-500',
-  primary: 'bg-primary-500',
-  success: 'bg-success-500',
-  warning: 'bg-warning-500',
-  danger: 'bg-danger-500',
-}
+function Badge({
+  className,
+  variant,
+  asChild = false,
+  ...props
+}: React.ComponentProps<"span"> &
+  VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
+  const Comp = asChild ? Slot : "span";
 
-const sizes: Record<string, string> = {
-  sm: 'px-2 py-0.5 text-xs',
-  md: 'px-3 py-1 text-sm',
-  lg: 'px-4 py-1.5 text-base',
-}
-
-function Badge({ children, variant = 'gray', size = 'md', dot = false, className }: BadgeProps) {
   return (
-    <span
-      className={clsx(
-        'inline-flex items-center rounded-full font-medium',
-        variants[variant],
-        sizes[size],
-        className
-      )}
-    >
-      {dot && (
-        <span className={clsx('w-1.5 h-1.5 rounded-full mr-1.5', dotColors[variant])} />
-      )}
-      {children}
-    </span>
-  )
+    <Comp
+      data-slot="badge"
+      className={cn(badgeVariants({ variant }), className)}
+      {...props}
+    />
+  );
 }
 
-Badge.Draft = (props: Omit<BadgeProps, 'variant' | 'dot' | 'children'>) => (
-  <Badge variant="gray" dot {...props}>Draft</Badge>
-)
-Badge.Pending = (props: Omit<BadgeProps, 'variant' | 'dot' | 'children'>) => (
-  <Badge variant="warning" dot {...props}>Pending</Badge>
-)
-Badge.Approved = (props: Omit<BadgeProps, 'variant' | 'dot' | 'children'>) => (
-  <Badge variant="success" dot {...props}>Approved</Badge>
-)
-Badge.Rejected = (props: Omit<BadgeProps, 'variant' | 'dot' | 'children'>) => (
-  <Badge variant="danger" dot {...props}>Rejected</Badge>
-)
-Badge.Active = (props: Omit<BadgeProps, 'variant' | 'dot' | 'children'>) => (
-  <Badge variant="primary" dot {...props}>Active</Badge>
-)
-
-export default Badge
+export { Badge, badgeVariants };

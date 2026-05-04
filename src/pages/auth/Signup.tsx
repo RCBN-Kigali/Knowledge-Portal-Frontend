@@ -1,30 +1,37 @@
 import { useState } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { GraduationCap, Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { User as UserIcon, GraduationCap, Lock, Eye, EyeOff, Mail, BookOpen, UserCog } from 'lucide-react'
 import { Input } from '../../components/ui/input'
 import { Label } from '../../components/ui/label'
 import { useAuth } from '../../hooks/useAuth'
-import { roleHome } from '../../routes/roleHome'
+import type { UserRole } from '../../types'
 
-export default function Login() {
+export default function Signup() {
   const navigate = useNavigate()
-  const location = useLocation()
-  const { login, isLoading } = useAuth()
+  const { register, login } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
+  const [accountType, setAccountType] = useState<Exclude<UserRole, 'admin'>>('student')
   const [error, setError] = useState('')
-  const [formData, setFormData] = useState({ email: '', password: '' })
+  const [submitting, setSubmitting] = useState(false)
+  const [formData, setFormData] = useState({ name: '', email: '', password: '' })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setSubmitting(true)
     try {
-      const user = await login(formData.email, formData.password)
-      // Teachers awaiting approval are blocked at the backend (HTTP 403) so we
-      // shouldn't reach here for pending teachers; just route by role.
-      const from = (location.state as { from?: string } | null)?.from
-      navigate(from && from !== '/login' ? from : roleHome(user.role), { replace: true })
+      await register(formData.email, formData.password, formData.name, accountType)
+      if (accountType === 'student') {
+        await login(formData.email, formData.password)
+        navigate('/student', { replace: true })
+      } else {
+        // Teachers are created in 'pending' status; backend rejects login until approval.
+        navigate('/teacher/pending', { replace: true })
+      }
     } catch (err: any) {
-      setError(err?.message || 'Login failed')
+      setError(err?.message || 'Registration failed')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -38,20 +45,59 @@ export default function Login() {
                 <GraduationCap className="w-9 h-9" />
               </div>
             </Link>
-            <h1 className="mb-2 text-2xl font-semibold">Welcome Back!</h1>
-            <p className="text-muted-foreground">Log in to continue your learning journey</p>
+            <h1 className="mb-2 text-2xl font-semibold">Create Your Account</h1>
+            <p className="text-muted-foreground">Join the learning community</p>
           </div>
 
           <div className="bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-sm">
-            <h2 className="mb-6 text-xl font-semibold">Log In</h2>
-
             {error && (
               <div className="mb-5 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
                 {error}
               </div>
             )}
 
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              <button
+                type="button"
+                onClick={() => setAccountType('student')}
+                className={`p-4 rounded-xl border transition-all ${
+                  accountType === 'student'
+                    ? 'border-primary bg-primary/5 text-primary'
+                    : 'border-border bg-card text-muted-foreground hover:bg-muted'
+                }`}
+              >
+                <BookOpen className="w-6 h-6 mx-auto mb-2" />
+                <div className="font-medium">Student</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setAccountType('teacher')}
+                className={`p-4 rounded-xl border transition-all ${
+                  accountType === 'teacher'
+                    ? 'border-primary bg-primary/5 text-primary'
+                    : 'border-border bg-card text-muted-foreground hover:bg-muted'
+                }`}
+              >
+                <UserCog className="w-6 h-6 mx-auto mb-2" />
+                <div className="font-medium">Teacher</div>
+              </button>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <div className="relative">
+                  <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    id="name"
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="pl-11 h-12 bg-input-background border-border rounded-xl"
+                    required
+                  />
+                </div>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email Address</Label>
                 <div className="relative">
@@ -59,7 +105,6 @@ export default function Login() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="Enter your email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="pl-11 h-12 bg-input-background border-border rounded-xl"
@@ -67,7 +112,6 @@ export default function Login() {
                   />
                 </div>
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
@@ -75,11 +119,11 @@ export default function Login() {
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter your password"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     className="pl-11 pr-11 h-12 bg-input-background border-border rounded-xl"
                     required
+                    minLength={8}
                   />
                   <button
                     type="button"
@@ -89,22 +133,23 @@ export default function Login() {
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
+                <p className="text-xs text-muted-foreground">At least 8 characters.</p>
               </div>
 
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={submitting}
                 className="w-full h-14 bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-xl transition-all hover:shadow-lg active:scale-[0.98] disabled:opacity-60 mt-6"
               >
-                <span className="text-lg">{isLoading ? 'Signing in...' : 'Log In'}</span>
+                <span className="text-lg">{submitting ? 'Creating account...' : 'Create Account'}</span>
               </button>
             </form>
 
             <div className="mt-6 text-center">
               <p className="text-muted-foreground">
-                Don't have an account?{' '}
-                <Link to="/signup" className="text-primary hover:underline font-medium">
-                  Create Account
+                Already have an account?{' '}
+                <Link to="/login" className="text-primary hover:underline font-medium">
+                  Log In
                 </Link>
               </p>
             </div>

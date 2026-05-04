@@ -1,21 +1,26 @@
-export type UserRole = 'super_admin' | 'school_admin' | 'school_teacher' | 'school_student' | 'independent_teacher'
+export type UserRole = 'student' | 'teacher' | 'admin'
+
+export type ApprovalStatus = 'pending' | 'approved' | 'rejected'
 
 export interface User {
   id: string
   email: string
   name: string
-  firstName?: string
-  lastName?: string
   role: UserRole
-  schoolId: string | null
-  schoolName?: string
-  avatarUrl?: string
-  permissions: string[]
-  createdAt?: string
+  is_active: boolean
+  school: string | null
+  subjects: string[] | null
+  approval_status: ApprovalStatus | null
+  created_at: string
 }
 
-export type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
-export type Variant = 'primary' | 'secondary' | 'success' | 'warning' | 'danger'
+export interface TokenResponse {
+  access_token: string
+  refresh_token: string
+  token_type: string
+  expires_in: number
+  user: User
+}
 
 export interface ApiError {
   message: string
@@ -23,340 +28,118 @@ export interface ApiError {
   errors?: Record<string, string[]>
 }
 
-export interface PaginatedResponse<T> {
-  data: T[]
-  pagination: {
-    page: number
-    perPage: number
-    total: number
-    totalPages: number
-  }
+export type ContentType = 'video' | 'audio' | 'article'
+export type ContentStatus = 'draft' | 'published'
+
+export interface ExternalLink {
+  label: string
+  url: string
 }
 
-// ─── Domain Types ────────────────────────────────────────────
-
-export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced'
-export type CourseCategory = 'mathematics' | 'science' | 'languages' | 'arts' | 'technology' | 'social_studies' | 'health' | 'agriculture' | 'other'
-export type EnrollmentStatus = 'pending' | 'approved' | 'rejected' | 'completed'
-export type LessonType = 'lecture' | 'quiz' | 'assignment'
-export type SubmissionStatus = 'submitted' | 'graded' | 'returned'
-
-export interface School {
-  id: string
-  name: string
-  location: string
-  description?: string
-  studentCount?: number
-  teacherCount?: number
-  logoUrl?: string
-}
-
-export interface Teacher {
-  id: string
-  name: string
-  avatarUrl?: string
-  bio?: string
-  schoolId?: string | null
-  schoolName?: string
-  courseCount?: number
-}
-
-export interface Course {
+export interface Content {
   id: string
   title: string
   description: string
-  thumbnailUrl?: string
-  category: CourseCategory
-  difficulty: DifficultyLevel
-  teacher: Teacher
-  isPublic: boolean
-  schoolId?: string | null
-  studentCount: number
-  rating?: number
-  ratingCount?: number
-  moduleCount: number
-  lessonCount: number
-  estimatedHours?: number
-  whatYouLearn?: string[]
-  requirements?: string[]
-  createdAt: string
-  updatedAt?: string
+  content_type: ContentType
+  file_url: string | null
+  teacher_id: string
+  subject: string
+  grade_level: string
+  duration_minutes: number | null
+  hashtags: string[] | null
+  external_links: ExternalLink[] | null
+  status: ContentStatus
+  views_count: number
+  likes_count: number
+  dislikes_count: number
+  comments_count: number
+  created_at: string
+  updated_at: string
 }
 
-export interface Module {
+export interface FeedPage {
+  page: number
+  limit: number
+  total: number
+  items: Content[]
+}
+
+export interface CategoriesResponse {
+  categories: string[]
+}
+
+export interface TrendingResponse {
+  trending_searches: string[]
+  trending_content: Content[]
+}
+
+export interface EngagementState {
+  content_id: string
+  likes_count: number
+  dislikes_count: number
+  user_vote: 'like' | 'dislike' | null
+}
+
+export interface CommentItem {
   id: string
-  courseId: string
-  title: string
-  description?: string
-  order: number
-  lessons: Lesson[]
-}
-
-export interface Lesson {
-  id: string
-  moduleId: string
-  title: string
-  type: LessonType
-  order: number
-  durationMinutes?: number
-  isCompleted?: boolean
-  content?: LessonContent
-}
-
-export interface LessonContent {
-  // Lecture content
-  text?: string
-  videoUrl?: string
-  
-  // Quiz content
-  timeLimit?: number
-  passingScore?: number
-  questions?: QuizQuestionItem[]
-  
-  // Assignment content
-  instructions?: string
-  submissionType?: 'file' | 'text' | 'both'
-  totalPoints?: number
-  dueDate?: string
-}
-
-export interface QuizQuestionItem {
-  id: string
+  content_id: string
+  user_id: string
   text: string
-  type: 'multiple_choice' | 'true_false'
-  options: QuizOptionItem[]
-  correctOptionId: string
-  points: number
+  parent_comment_id: string | null
+  is_unread: boolean
+  created_at: string
 }
 
-export interface QuizOptionItem {
-  id: string
-  text: string
+export interface CommentPage {
+  page: number
+  limit: number
+  total: number
+  items: CommentItem[]
 }
 
-export interface Enrollment {
-  id: string
-  courseId: string
-  course: Course
-  studentId: string
-  status: EnrollmentStatus
-  progress: number
-  completedLessons: number
-  totalLessons: number
-  enrolledAt: string
-  completedAt?: string
-  lastAccessedAt?: string
-  currentLessonId?: string
-}
+export type AnnouncementPriority = 'normal' | 'high'
 
-export interface Quiz {
+export interface AnnouncementListItem {
   id: string
-  lessonId: string
   title: string
-  description?: string
-  passingScore: number
-  timeLimit?: number
-  questions: QuizQuestion[]
+  content_preview: string
+  priority: AnnouncementPriority
+  created_at: string
+  is_read: boolean
+  has_unread_indicator: boolean
 }
 
-export interface QuizQuestion {
-  id: string
-  text: string
-  type: 'single_choice' | 'multiple_choice'
-  options: QuizOption[]
-  correctOptionIds?: string[]
-}
-
-export interface QuizOption {
-  id: string
-  text: string
-}
-
-export interface QuizAttempt {
-  id: string
-  quizId: string
-  score: number
-  passed: boolean
-  answers: QuizAnswer[]
-  submittedAt: string
-}
-
-export interface QuizAnswer {
-  questionId: string
-  selectedOptionIds: string[]
-  isCorrect?: boolean
-}
-
-export interface Assignment {
-  id: string
-  lessonId: string
-  title: string
-  instructions: string
-  maxScore: number
-  allowFileUpload: boolean
-  allowTextSubmission: boolean
-  dueDate?: string
-}
-
-export interface AssignmentSubmission {
-  id: string
-  assignmentId: string
-  studentId: string
-  text?: string
-  fileUrl?: string
-  fileName?: string
-  status: SubmissionStatus
-  score?: number
-  feedback?: string
-  submittedAt: string
-  gradedAt?: string
-}
-
-export interface Announcement {
+export interface AnnouncementDetail {
   id: string
   title: string
   content: string
-  authorName: string
-  authorAvatarUrl?: string
-  courseId?: string
-  courseName?: string
-  isRead: boolean
-  createdAt: string
+  priority: AnnouncementPriority
+  created_by: string
+  created_at: string
+  is_read: boolean
 }
 
-export interface StudentDashboardData {
-  recentCourse?: Enrollment
-  enrolledCourses: Enrollment[]
-  upcomingDeadlines: { lessonTitle: string; courseName: string; dueDate: string; type: LessonType }[]
-  announcements: Announcement[]
-  stats: {
-    enrolledCount: number
-    completedCount: number
-    averageGrade: number
-    hoursSpent: number
-  }
-  schoolCourses?: Course[]
+export interface AnnouncementPage {
+  page: number
+  limit: number
+  total: number
+  items: AnnouncementListItem[]
 }
 
-export interface StudentProgress {
-  overall: {
-    enrolledCount: number
-    completedCount: number
-    averageGrade: number
-    totalHours: number
-  }
-  courses: {
-    courseId: string
-    courseTitle: string
-    progress: number
-    grade?: number
-    status: EnrollmentStatus
-    lastAccessed?: string
-  }[]
-  gradeHistory: {
-    lessonTitle: string
-    courseName: string
-    type: LessonType
-    score: number
-    maxScore: number
-    date: string
-  }[]
-}
-
-
-// ─── Teacher Types ────────────────────────────────────────────
-
-export type CourseStatus = 'draft' | 'pending' | 'approved' | 'rejected'
-export type CourseVisibility = 'private' | 'public'
-
-export interface TeacherCourse extends Course {
-  status: CourseStatus
-  visibility: CourseVisibility
-  rejectionReason?: string
-  submittedAt?: string
-  reviewedAt?: string
-}
-
-export interface TeacherDashboardData {
-  stats: {
-    totalCourses: number
-    activeStudents: number
-    pendingSubmissions: number
-    pendingEnrollmentRequests?: number
-  }
-  courseCounts: {
-    draft: number
-    pending: number
-    approved: number
-    rejected: number
-  }
-  recentActivity: { message: string; date: string }[]
-}
-
-export interface EnrollmentRequest {
+export interface NotificationItem {
   id: string
-  studentId: string
-  studentName: string
-  studentEmail: string
-  studentSchool: string
-  courseId: string
-  courseName: string
-  requestedAt: string
-  status: 'pending' | 'approved' | 'rejected'
+  notification_type: string
+  title: string
+  message: string
+  related_content_id: string | null
+  related_announcement_id: string | null
+  actor_id: string | null
+  is_read: boolean
+  created_at: string
 }
 
-export interface Submission {
-  id: string
-  assignmentId: string
-  assignmentTitle: string
-  lessonId: string
-  courseId: string
-  courseName: string
-  studentId: string
-  studentName: string
-  studentAvatarUrl?: string
-  text?: string
-  fileUrl?: string
-  fileName?: string
-  submittedAt: string
-  status: 'pending' | 'graded'
-  score?: number
-  maxScore: number
-  feedback?: string
-  gradedAt?: string
-}
-
-export interface CourseAnalytics {
-  enrolledCount: number
-  completionRate: number
-  averageScore: number
-  moduleCompletion: { moduleTitle: string; completionRate: number }[]
-  quizScores: { quizTitle: string; averageScore: number }[]
-  assignmentSubmissionRate: number
-}
-
-// ─── Chat Types ────────────────────────────────────────────
-
-export interface Message {
-  id: string
-  conversationId: string
-  senderId: string
-  senderName: string
-  senderAvatarUrl?: string
-  text: string
-  sentAt: string
-}
-
-export interface Conversation {
-  id: string
-  courseId: string
-  courseName: string
-  participantId: string
-  participantName: string
-  participantAvatarUrl?: string
-  participantRole: 'student' | 'teacher'
-  lastMessage?: string
-  lastMessageAt?: string
-  unreadCount: number
-  messages: Message[]
+export interface NotificationPage {
+  unread_count: number
+  total: number
+  items: NotificationItem[]
 }

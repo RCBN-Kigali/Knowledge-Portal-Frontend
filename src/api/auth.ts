@@ -1,52 +1,25 @@
-import apiClient from './client'
-import type { User } from '../types'
-
-export interface LoginResponse {
-  user: User
-  accessToken: string
-  refreshToken: string
-}
-
-export interface RefreshResponse {
-  accessToken: string
-  refreshToken?: string
-}
+import client from './client'
+import type { TokenResponse, User, UserRole } from '../types'
 
 export const authApi = {
-  login: async (email: string, password: string): Promise<LoginResponse> => {
-    const response = await apiClient.post('/auth/login', { email, password })
-    return response.data
+  login: async (email: string, password: string): Promise<TokenResponse> => {
+    const { data } = await client.post<TokenResponse>('/auth/login', { email, password })
+    return data
   },
-
+  register: async (
+    email: string,
+    password: string,
+    name: string,
+    role: UserRole,
+  ): Promise<User> => {
+    const { data } = await client.post<User>('/auth/register', { email, password, name, role })
+    return data
+  },
   logout: async (): Promise<void> => {
-    try {
-      await apiClient.post('/auth/logout')
-    } catch (error) {
-      console.warn('Logout API call failed:', error)
-    }
+    try { await client.post('/auth/logout') } catch { /* stateless logout */ }
   },
-
-  refresh: async (refreshToken: string): Promise<RefreshResponse> => {
-    const response = await apiClient.post('/auth/refresh', { refreshToken })
-    return response.data
-  },
-
-  getMe: async (): Promise<User> => {
-    const response = await apiClient.get('/auth/me')
-    return response.data
-  },
-
-  changePassword: async (currentPassword: string, newPassword: string): Promise<void> => {
-    await apiClient.post('/auth/change-password', { currentPassword, newPassword })
-  },
-
-  forgotPassword: async (email: string): Promise<void> => {
-    await apiClient.post('/auth/forgot-password', { email })
-  },
-
-  resetPassword: async (token: string, newPassword: string): Promise<void> => {
-    await apiClient.post('/auth/reset-password', { token, newPassword })
+  me: async (): Promise<User> => {
+    const { data } = await client.get<User>('/auth/me')
+    return data
   },
 }
-
-export default authApi
