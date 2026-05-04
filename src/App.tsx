@@ -10,6 +10,7 @@ import RoleGuard from './routes/RoleGuard'
 
 import StudentLayout from './layouts/StudentLayout'
 import TeacherLayout from './layouts/TeacherLayout'
+import AdminLayout from './layouts/AdminLayout'
 
 import Welcome from './pages/Welcome'
 import Login from './pages/auth/Login'
@@ -37,6 +38,11 @@ import EditContent from './pages/teacher/EditContent'
 import TeacherComments from './pages/teacher/TeacherComments'
 import TeacherProfile from './pages/teacher/TeacherProfile'
 import AdminDashboard from './pages/admin/AdminDashboard'
+import PendingApprovals from './pages/admin/PendingApprovals'
+import TeacherManagement from './pages/admin/TeacherManagement'
+import AddTeacher from './pages/admin/AddTeacher'
+import AdminAnnouncements from './pages/admin/AdminAnnouncements'
+import AdminSettings from './pages/admin/AdminSettings'
 
 export default function App() {
   return (
@@ -93,15 +99,23 @@ export default function App() {
               <Route path="profile" element={<TeacherProfile />} />
             </Route>
             <Route
-              path="/admin/dashboard"
+              path="/admin"
               element={
                 <ProtectedRoute>
                   <RoleGuard roles={['admin']}>
-                    <AdminDashboard />
+                    <AdminLayout />
                   </RoleGuard>
                 </ProtectedRoute>
               }
-            />
+            >
+              <Route index element={<Navigate to="/admin/dashboard" replace />} />
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="approvals" element={<PendingApprovals />} />
+              <Route path="teachers" element={<TeacherManagement />} />
+              <Route path="teachers/add" element={<AddTeacher />} />
+              <Route path="announcements" element={<AdminAnnouncements />} />
+              <Route path="settings" element={<AdminSettings />} />
+            </Route>
 
             <Route path="/404" element={<NotFound />} />
             <Route path="*" element={<Navigate to="/404" replace />} />

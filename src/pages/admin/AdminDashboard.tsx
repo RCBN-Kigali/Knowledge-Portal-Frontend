@@ -1,25 +1,126 @@
-import { useAuth } from '../../hooks/useAuth'
-import { Button } from '../../components/ui/button'
-import { LogOut } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { GraduationCap, FileText, UserCog, Megaphone, Clock } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { Skeleton } from '../../components/ui/skeleton'
+import { adminApi } from '../../api/admin'
 
 export default function AdminDashboard() {
-  const { user, logout } = useAuth()
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ['admin', 'stats'],
+    queryFn: adminApi.stats,
+    refetchInterval: 60_000,
+  })
+
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-3xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold">Admin dashboard</h1>
-          <Button variant="outline" onClick={() => logout()}>
-            <LogOut className="w-4 h-4" />
-            Log out
-          </Button>
+    <div className="min-h-screen bg-background">
+      <header className="bg-card border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+          <h2 className="text-xl font-semibold">Admin Dashboard</h2>
         </div>
-        <div className="bg-card border border-border rounded-2xl p-6">
-          <p className="text-muted-foreground">
-            Welcome, {user?.name}. The admin experience (teacher approvals, announcements, settings) is in the next slice.
-          </p>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 pb-24 lg:pb-6">
+        {/* Summary Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <StatCard
+            value={stats?.pending_approvals ?? 0}
+            label="Pending Approvals"
+            icon={<Clock className="w-6 h-6" />}
+            tone="bg-amber-100 text-amber-600"
+            isLoading={isLoading}
+          />
+          <StatCard
+            value={stats?.total_teachers ?? 0}
+            label="Total Teachers"
+            icon={<UserCog className="w-6 h-6" />}
+            tone="bg-primary/10 text-primary"
+            isLoading={isLoading}
+          />
+          <StatCard
+            value={stats?.total_students ?? 0}
+            label="Total Students"
+            icon={<GraduationCap className="w-6 h-6" />}
+            tone="bg-secondary/10 text-secondary"
+            isLoading={isLoading}
+          />
+          <StatCard
+            value={stats?.published_content ?? 0}
+            label="Active Content"
+            icon={<FileText className="w-6 h-6" />}
+            tone="bg-accent/10 text-accent"
+            isLoading={isLoading}
+          />
+        </div>
+
+        {/* Action Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Link
+            to="/admin/approvals"
+            className="bg-gradient-to-br from-amber-50 to-amber-100/50 border-2 border-amber-200 rounded-2xl p-8 hover:shadow-lg transition-all group relative"
+          >
+            {(stats?.pending_approvals ?? 0) > 0 && (
+              <div className="absolute top-4 right-4 min-w-[2rem] h-8 px-2 rounded-full bg-amber-600 text-white flex items-center justify-center text-sm font-bold">
+                {stats!.pending_approvals}
+              </div>
+            )}
+            <div className="w-16 h-16 rounded-2xl bg-amber-200 text-amber-700 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <Clock className="w-8 h-8" />
+            </div>
+            <h3 className="mb-2 text-xl font-semibold">Pending Approvals</h3>
+            <p className="text-sm text-muted-foreground">Review teacher applications awaiting approval</p>
+          </Link>
+
+          <Link
+            to="/admin/teachers"
+            className="bg-gradient-to-br from-primary/10 to-primary/5 border-2 border-primary/20 rounded-2xl p-8 hover:shadow-lg transition-all group"
+          >
+            <div className="w-16 h-16 rounded-2xl bg-primary/20 text-primary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <UserCog className="w-8 h-8" />
+            </div>
+            <h3 className="mb-2 text-xl font-semibold">Manage Teachers</h3>
+            <p className="text-sm text-muted-foreground">Add, edit, or deactivate teacher accounts</p>
+          </Link>
+
+          <Link
+            to="/admin/announcements"
+            className="bg-gradient-to-br from-secondary/10 to-secondary/5 border-2 border-secondary/20 rounded-2xl p-8 hover:shadow-lg transition-all group"
+          >
+            <div className="w-16 h-16 rounded-2xl bg-secondary/20 text-secondary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <Megaphone className="w-8 h-8" />
+            </div>
+            <h3 className="mb-2 text-xl font-semibold">Announcements</h3>
+            <p className="text-sm text-muted-foreground">Send announcements to students and teachers</p>
+          </Link>
         </div>
       </div>
+    </div>
+  )
+}
+
+function StatCard({
+  value,
+  label,
+  icon,
+  tone,
+  isLoading,
+}: {
+  value: number
+  label: string
+  icon: React.ReactNode
+  tone: string
+  isLoading: boolean
+}) {
+  return (
+    <div className="bg-card border border-border rounded-2xl p-6">
+      <div className="flex items-start justify-between mb-4">
+        <div className={`w-12 h-12 rounded-xl ${tone} flex items-center justify-center`}>{icon}</div>
+      </div>
+      {isLoading ? (
+        <Skeleton className="h-9 w-16 mb-1" />
+      ) : (
+        <p className="text-3xl font-semibold mb-1">{value.toLocaleString()}</p>
+      )}
+      <p className="text-sm text-muted-foreground">{label}</p>
     </div>
   )
 }
