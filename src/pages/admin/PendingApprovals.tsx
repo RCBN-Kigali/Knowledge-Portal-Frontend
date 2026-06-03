@@ -7,6 +7,7 @@ import { Badge } from '../../components/ui/badge'
 import { Skeleton } from '../../components/ui/skeleton'
 import { adminApi } from '../../api/admin'
 import { format } from 'date-fns'
+import { careerLabel } from '../../lib/careers'
 import type { Content, ContentType } from '../../types'
 
 function getContentIcon(type: ContentType) {
@@ -150,17 +151,11 @@ export default function PendingApprovals() {
                             {item.description}
                           </p>
                         )}
-                        {item.hashtags && item.hashtags.length > 0 && (
+                        {item.career && (
                           <div className="flex flex-wrap gap-2">
-                            {item.hashtags.slice(0, 5).map((tag) => (
-                              <Badge
-                                key={String(tag)}
-                                variant="secondary"
-                                className="text-xs bg-primary/10 text-primary border-0"
-                              >
-                                #{tag}
-                              </Badge>
-                            ))}
+                            <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-0">
+                              {careerLabel(item.career)}
+                            </Badge>
                           </div>
                         )}
                       </div>

@@ -21,6 +21,7 @@ import { useQuery } from '@tanstack/react-query'
 import { discoveryApi } from '../../api/discovery'
 import { Badge } from '../../components/ui/badge'
 import { Skeleton } from '../../components/ui/skeleton'
+import { careerLabel } from '../../lib/careers'
 import type { Content, ContentType } from '../../types'
 
 const careerData: Record<string, { name: string; icon: any; color: string; description: string; pathways: string[] }> = {
@@ -182,8 +183,8 @@ export default function CareerExplorer() {
   const items = isCareer ? (meta as typeof careerData.medicine).pathways : (meta as typeof subjectData.science).topics
   const Icon = meta.icon
 
-  // Backend filters by `subject` only, so for careers we use 'Career' category;
-  // for subjects we map the human label to the backend category.
+  // Backend filters by exact `subject`; careers share the 'Career' category.
+  // subjectId already carries the canonical stored value from the subject card.
   const filterSubject = isCareer ? 'Career' : subjectId ?? 'Science'
 
   const { data: feed, isLoading } = useQuery({
@@ -278,13 +279,13 @@ export default function CareerExplorer() {
                         </p>
                       </div>
                       <div className="space-y-2">
-                        <div className="flex flex-wrap gap-2">
-                          {item.hashtags?.slice(0, 3).map((tag) => (
-                            <Badge key={String(tag)} variant="secondary" className="text-xs bg-muted border-0">
-                              #{tag}
+                        {item.career && (
+                          <div className="flex flex-wrap gap-2">
+                            <Badge variant="secondary" className="text-xs bg-muted border-0">
+                              {careerLabel(item.career)}
                             </Badge>
-                          ))}
-                        </div>
+                          </div>
+                        )}
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <Heart className="w-4 h-4" />

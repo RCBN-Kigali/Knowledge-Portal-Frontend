@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, X, Plus, ExternalLink as ExternalLinkIcon, Play, Headphones, FileText, Eye, Trash2, Upload } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
 import { Input } from '../../components/ui/input'
-import { Badge } from '../../components/ui/badge'
 import { Skeleton } from '../../components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select'
 import { teacherContentApi } from '../../api/teacherContent'
+import { careerOptions } from '../../lib/careers'
 import type { ContentType, ExternalLink as TExternalLink } from '../../types'
 
 const contentTypeOptions = [
@@ -16,11 +17,7 @@ const contentTypeOptions = [
 ]
 
 const subjects = ['Science', 'Math', 'English', 'History', 'Career']
-const grades = [
-  'Primary 1', 'Primary 2', 'Primary 3', 'Primary 4', 'Primary 5', 'Primary 6', 'Primary 7',
-  'Junior Secondary 1', 'Junior Secondary 2', 'Junior Secondary 3',
-  'Senior 4', 'Senior 5', 'Senior 6',
-]
+const levels = ['Beginner', 'Intermediate', 'Advanced']
 
 export default function EditContent() {
   const { contentId = '' } = useParams<{ contentId: string }>()
@@ -37,13 +34,11 @@ export default function EditContent() {
   const [description, setDescription] = useState('')
   const [subject, setSubject] = useState('')
   const [gradeLevel, setGradeLevel] = useState('')
-  const [hashtags, setHashtags] = useState<string[]>([])
-  const [hashtagInput, setHashtagInput] = useState('')
+  const [career, setCareer] = useState('')
   const [externalLinks, setExternalLinks] = useState<TExternalLink[]>([])
   const [newLinkLabel, setNewLinkLabel] = useState('')
   const [newLinkUrl, setNewLinkUrl] = useState('')
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [error, setError] = useState('')
 
   // Sync local state once data loads.
   useEffect(() => {
@@ -52,10 +47,11 @@ export default function EditContent() {
     setDescription(existing.description ?? '')
     setSubject(existing.subject)
     setGradeLevel(existing.grade_level)
-    setHashtags((existing.hashtags ?? []).map(String))
+    setCareer(existing.career ?? '')
     setExternalLinks(existing.external_links ?? [])
   }, [existing])
 
+  // Saves run in the background: we navigate away immediately and report via toast.
   const updateMut = useMutation({
     mutationFn: (status: 'draft' | 'pending' | undefined) =>
       teacherContentApi.update(contentId, {
@@ -63,19 +59,25 @@ export default function EditContent() {
         description,
         subject,
         grade_level: gradeLevel,
-        hashtags,
+        career: career || null,
         external_links: externalLinks,
         ...(status ? { status } : {}),
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['teacher-content'] })
-      navigate('/teacher/dashboard')
+      toast.success('Changes saved', { id: 'edit' })
     },
     onError: (err: any) => {
       const detail = err?.response?.data?.detail
-      setError(typeof detail === 'string' ? detail : err?.message ?? 'Update failed')
+      toast.error(typeof detail === 'string' ? detail : err?.message ?? 'Update failed', { id: 'edit' })
     },
   })
+
+  const save = (status: 'draft' | 'pending' | undefined) => {
+    toast.loading('Saving…', { id: 'edit' })
+    updateMut.mutate(status)
+    navigate('/teacher/dashboard')
+  }
 
   const deleteMut = useMutation({
     mutationFn: () => teacherContentApi.remove(contentId),
@@ -85,15 +87,6 @@ export default function EditContent() {
     },
   })
 
-  const handleHashtagAdd = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && hashtagInput.trim()) {
-      e.preventDefault()
-      const tag = hashtagInput.trim().replace(/^#/, '')
-      if (!hashtags.includes(tag)) setHashtags([...hashtags, tag])
-      setHashtagInput('')
-    }
-  }
-  const removeHashtag = (tag: string) => setHashtags(hashtags.filter((t) => t !== tag))
   const addExternalLink = () => {
     if (newLinkLabel.trim() && newLinkUrl.trim()) {
       setExternalLinks([...externalLinks, { label: newLinkLabel.trim(), url: newLinkUrl.trim() }])
@@ -138,12 +131,6 @@ export default function EditContent() {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
         <h1 className="mb-8 text-2xl sm:text-3xl font-semibold">Edit Content</h1>
-
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
-            {error}
-          </div>
-        )}
 
         <div className="space-y-6">
           <div>
@@ -200,14 +187,14 @@ export default function EditContent() {
               </Select>
             </div>
             <div>
-              <label className="block mb-2 font-medium">Grade level</label>
+              <label className="block mb-2 font-medium">Level</label>
               <Select value={gradeLevel} onValueChange={setGradeLevel}>
                 <SelectTrigger className="h-14 bg-input-background border-border">
-                  <SelectValue placeholder="Pick a grade" />
+                  <SelectValue placeholder="Pick a level" />
                 </SelectTrigger>
                 <SelectContent>
-                  {grades.map((g) => (
-                    <SelectItem key={g} value={g}>{g}</SelectItem>
+                  {levels.map((l) => (
+                    <SelectItem key={l} value={l}>{l}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -254,36 +241,17 @@ export default function EditContent() {
           </div>
 
           <div>
-            <label className="block mb-3 font-medium">Hashtags</label>
-            <Input
-              type="text"
-              placeholder="Type hashtag and press Enter..."
-              value={hashtagInput}
-              onChange={(e) => setHashtagInput(e.target.value)}
-              onKeyDown={handleHashtagAdd}
-              className="h-12 bg-input-background border-border"
-            />
-            {hashtags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-3">
-                {hashtags.map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="secondary"
-                    className="bg-primary/10 text-primary border-0 px-3 py-2 text-sm"
-                  >
-                    #{tag}
-                    <button
-                      type="button"
-                      onClick={() => removeHashtag(tag)}
-                      className="ml-2"
-                      aria-label={`Remove ${tag}`}
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </Badge>
+            <label className="block mb-3 font-medium">Career (Optional)</label>
+            <Select value={career} onValueChange={setCareer}>
+              <SelectTrigger className="h-14 bg-input-background border-border">
+                <SelectValue placeholder="Link this content to a career" />
+              </SelectTrigger>
+              <SelectContent>
+                {careerOptions.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>{c.label}</SelectItem>
                 ))}
-              </div>
-            )}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
@@ -341,17 +309,17 @@ export default function EditContent() {
           <div className="flex flex-col gap-3 pt-4">
             <button
               type="button"
-              onClick={() => updateMut.mutate(undefined)}
-              disabled={!title.trim() || updateMut.isPending}
+              onClick={() => save(undefined)}
+              disabled={!title.trim()}
               className="w-full px-6 py-4 bg-primary text-primary-foreground rounded-xl hover:shadow-lg transition-all disabled:opacity-50 font-medium"
             >
-              {updateMut.isPending ? 'Saving…' : 'Update Content'}
+              Update Content
             </button>
             {(existing.status === 'draft' || existing.status === 'rejected') && (
               <button
                 type="button"
-                onClick={() => updateMut.mutate('pending')}
-                disabled={!title.trim() || updateMut.isPending}
+                onClick={() => save('pending')}
+                disabled={!title.trim()}
                 className="w-full px-6 py-4 bg-secondary text-secondary-foreground rounded-xl hover:shadow-lg transition-all disabled:opacity-50 font-medium"
               >
                 {existing.status === 'rejected' ? 'Resubmit for Review' : 'Submit for Review'}

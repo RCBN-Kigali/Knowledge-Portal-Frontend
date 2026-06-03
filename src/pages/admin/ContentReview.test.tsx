@@ -25,14 +25,14 @@ function setup(contentId: string) {
 }
 
 describe('ContentReview (admin preview)', () => {
-  it('renders pending content with title, body, tags, and decision buttons', async () => {
+  it('renders pending content with title, body, career, and decision buttons', async () => {
     seedContent({
       id: 'c1',
       title: 'Photosynthesis review',
       description: 'Plants make food using sunlight.\n\n## How it works\n\nGreen.',
       status: 'pending',
       content_type: 'article',
-      hashtags: ['Biology', 'Plants'],
+      career: 'medicine',
     })
 
     setup('c1')
@@ -41,7 +41,7 @@ describe('ContentReview (admin preview)', () => {
       await screen.findByRole('heading', { name: /photosynthesis review/i }),
     ).toBeInTheDocument()
     expect(screen.getByText('Plants make food using sunlight.')).toBeInTheDocument()
-    expect(screen.getByText('#Biology')).toBeInTheDocument()
+    expect(screen.getByText('Medicine & Healthcare')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /approve & publish/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /^reject$/i })).toBeInTheDocument()
   })

@@ -275,10 +275,7 @@ export const handlers = [
       subject: fd.get('subject') as string,
       grade_level: fd.get('grade_level') as string,
       duration_minutes: null,
-      hashtags: ((fd.get('hashtags') as string) ?? '')
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean),
+      career: (fd.get('career') as string) || null,
       external_links: JSON.parse((fd.get('external_links') as string) ?? '[]'),
       // Submitting for review goes to 'pending'; admin approval flips it
       // to 'published' via the /admin/content/:id/approve handler.
@@ -440,9 +437,9 @@ export function seedContent(overrides: Partial<any> = {}) {
     file_url: overrides.file_url ?? null,
     teacher_id: overrides.teacher_id ?? 'user-1',
     subject: overrides.subject ?? 'Science',
-    grade_level: overrides.grade_level ?? 'Grade 9',
+    grade_level: overrides.grade_level ?? 'Intermediate',
     duration_minutes: overrides.duration_minutes ?? null,
-    hashtags: overrides.hashtags ?? ['Test'],
+    career: overrides.career ?? 'technology',
     external_links: overrides.external_links ?? [],
     status: overrides.status ?? 'published',
     views_count: overrides.views_count ?? 0,

@@ -40,13 +40,15 @@ const careerPaths = [
   { id: 'arts', subject: 'Career', name: 'Creative Arts', icon: Palette, color: 'from-pink-400 to-rose-500', description: 'Design, music, writing' },
 ]
 
+// `value` matches the subject string teachers save on content (UploadContent.tsx),
+// so the explore filter is an exact backend match. `name` is the display label.
 const subjectCards = [
-  { id: 'science', name: 'Science', icon: FlaskConical, color: 'bg-secondary/20 text-secondary border-secondary/30' },
-  { id: 'math', name: 'Mathematics', icon: Calculator, color: 'bg-primary/20 text-primary border-primary/30' },
-  { id: 'english', name: 'English', icon: BookOpen, color: 'bg-purple-100 text-purple-700 border-purple-300' },
-  { id: 'history', name: 'History', icon: History, color: 'bg-amber-100 text-amber-700 border-amber-300' },
-  { id: 'geography', name: 'Geography', icon: Globe, color: 'bg-teal-100 text-teal-700 border-teal-300' },
-  { id: 'languages', name: 'Languages', icon: Languages, color: 'bg-indigo-100 text-indigo-700 border-indigo-300' },
+  { id: 'science', value: 'Science', name: 'Science', icon: FlaskConical, color: 'bg-secondary/20 text-secondary border-secondary/30' },
+  { id: 'math', value: 'Math', name: 'Mathematics', icon: Calculator, color: 'bg-primary/20 text-primary border-primary/30' },
+  { id: 'english', value: 'English', name: 'English', icon: BookOpen, color: 'bg-purple-100 text-purple-700 border-purple-300' },
+  { id: 'history', value: 'History', name: 'History', icon: History, color: 'bg-amber-100 text-amber-700 border-amber-300' },
+  { id: 'geography', value: 'Geography', name: 'Geography', icon: Globe, color: 'bg-teal-100 text-teal-700 border-teal-300' },
+  { id: 'languages', value: 'Languages', name: 'Languages', icon: Languages, color: 'bg-indigo-100 text-indigo-700 border-indigo-300' },
 ]
 
 function getContentIcon(type: ContentType) {
@@ -284,7 +286,7 @@ export default function SearchPage() {
                   return (
                     <Link
                       key={subject.id}
-                      to={`/student/explore?subject=${subject.name}`}
+                      to={`/student/explore?subject=${subject.value}`}
                       className={`border rounded-2xl p-4 hover:shadow-md transition-all active:scale-[0.98] text-center ${subject.color}`}
                     >
                       <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-current/10 flex items-center justify-center">

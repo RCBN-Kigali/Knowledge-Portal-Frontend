@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Upload, X, Plus, ExternalLink, Play, Headphones, FileText } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
 import { Input } from '../../components/ui/input'
-import { Badge } from '../../components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select'
 import { teacherContentApi } from '../../api/teacherContent'
+import { careerOptions } from '../../lib/careers'
 import type { ContentType, ExternalLink as TExternalLink } from '../../types'
 
 const contentTypeOptions = [
@@ -45,11 +46,7 @@ const contentTypeOptions = [
 ]
 
 const subjects = ['Science', 'Math', 'English', 'History', 'Career']
-const grades = [
-  'Primary 1', 'Primary 2', 'Primary 3', 'Primary 4', 'Primary 5', 'Primary 6', 'Primary 7',
-  'Junior Secondary 1', 'Junior Secondary 2', 'Junior Secondary 3',
-  'Senior 4', 'Senior 5', 'Senior 6',
-]
+const levels = ['Beginner', 'Intermediate', 'Advanced']
 
 export default function UploadContent() {
   const navigate = useNavigate()
@@ -60,14 +57,14 @@ export default function UploadContent() {
   const [articleBody, setArticleBody] = useState('')
   const [subject, setSubject] = useState('')
   const [gradeLevel, setGradeLevel] = useState('')
-  const [hashtags, setHashtags] = useState<string[]>([])
-  const [hashtagInput, setHashtagInput] = useState('')
+  const [career, setCareer] = useState('')
   const [externalLinks, setExternalLinks] = useState<TExternalLink[]>([])
   const [newLinkLabel, setNewLinkLabel] = useState('')
   const [newLinkUrl, setNewLinkUrl] = useState('')
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
-  const [error, setError] = useState('')
 
+  // The upload runs in the background: we navigate away immediately and report
+  // progress via toasts, so the teacher is never held on a spinner.
   const uploadMut = useMutation({
     mutationFn: (publish: boolean) => {
       if (!contentType) throw new Error('Pick a content type')
@@ -79,32 +76,27 @@ export default function UploadContent() {
         content_type: contentType,
         subject,
         grade_level: gradeLevel,
-        hashtags,
+        career: career || null,
         external_links: externalLinks,
         publish,
         file: contentType !== 'article' ? uploadedFile : null,
       })
     },
-    onSuccess: () => {
+    onSuccess: (_data, publish) => {
       qc.invalidateQueries({ queryKey: ['teacher-content', 'list'] })
-      navigate('/teacher/dashboard')
+      toast.success(publish ? 'Submitted for review' : 'Saved as draft', { id: 'upload' })
     },
     onError: (err: any) => {
       const detail = err?.response?.data?.detail
-      setError(typeof detail === 'string' ? detail : err?.message ?? 'Upload failed')
+      toast.error(typeof detail === 'string' ? detail : err?.message ?? 'Upload failed', { id: 'upload' })
     },
   })
 
-  const handleHashtagAdd = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && hashtagInput.trim()) {
-      e.preventDefault()
-      const tag = hashtagInput.trim().replace(/^#/, '')
-      if (!hashtags.includes(tag)) setHashtags([...hashtags, tag])
-      setHashtagInput('')
-    }
+  const submit = (publish: boolean) => {
+    toast.loading('Uploading…', { id: 'upload' })
+    uploadMut.mutate(publish)
+    navigate('/teacher/dashboard')
   }
-
-  const removeHashtag = (tag: string) => setHashtags(hashtags.filter((t) => t !== tag))
 
   const addExternalLink = () => {
     if (newLinkLabel.trim() && newLinkUrl.trim()) {
@@ -141,12 +133,6 @@ export default function UploadContent() {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
         <h1 className="mb-8 text-2xl sm:text-3xl font-semibold">Create New Content</h1>
-
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
-            {error}
-          </div>
-        )}
 
         <div className="space-y-6">
           {/* Title */}
@@ -196,7 +182,7 @@ export default function UploadContent() {
             </div>
           </div>
 
-          {/* Subject + Grade */}
+          {/* Subject + Level */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block mb-2 font-medium">Subject</label>
@@ -212,14 +198,14 @@ export default function UploadContent() {
               </Select>
             </div>
             <div>
-              <label className="block mb-2 font-medium">Grade level</label>
+              <label className="block mb-2 font-medium">Level</label>
               <Select value={gradeLevel} onValueChange={setGradeLevel}>
                 <SelectTrigger className="h-14 bg-input-background border-border">
-                  <SelectValue placeholder="Pick a grade" />
+                  <SelectValue placeholder="Pick a level" />
                 </SelectTrigger>
                 <SelectContent>
-                  {grades.map((g) => (
-                    <SelectItem key={g} value={g}>{g}</SelectItem>
+                  {levels.map((l) => (
+                    <SelectItem key={l} value={l}>{l}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -301,38 +287,19 @@ export default function UploadContent() {
             </div>
           )}
 
-          {/* Hashtags */}
+          {/* Career */}
           <div>
-            <label className="block mb-3 font-medium">Hashtags</label>
-            <Input
-              type="text"
-              placeholder="Type hashtag and press Enter..."
-              value={hashtagInput}
-              onChange={(e) => setHashtagInput(e.target.value)}
-              onKeyDown={handleHashtagAdd}
-              className="h-12 bg-input-background border-border"
-            />
-            {hashtags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-3">
-                {hashtags.map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="secondary"
-                    className="bg-primary/10 text-primary border-0 px-3 py-2 text-sm"
-                  >
-                    #{tag}
-                    <button
-                      type="button"
-                      onClick={() => removeHashtag(tag)}
-                      className="ml-2 hover:text-primary-foreground"
-                      aria-label={`Remove ${tag}`}
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </Badge>
+            <label className="block mb-3 font-medium">Career (Optional)</label>
+            <Select value={career} onValueChange={setCareer}>
+              <SelectTrigger className="h-14 bg-input-background border-border">
+                <SelectValue placeholder="Link this content to a career" />
+              </SelectTrigger>
+              <SelectContent>
+                {careerOptions.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>{c.label}</SelectItem>
                 ))}
-              </div>
-            )}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* External links */}
@@ -392,19 +359,19 @@ export default function UploadContent() {
           <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <button
               type="button"
-              onClick={() => uploadMut.mutate(true)}
-              disabled={!canSubmit || uploadMut.isPending}
+              onClick={() => submit(true)}
+              disabled={!canSubmit}
               className="flex-1 px-6 py-4 bg-primary text-primary-foreground rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
             >
-              {uploadMut.isPending ? 'Submitting…' : 'Submit for Review'}
+              Submit for Review
             </button>
             <button
               type="button"
-              onClick={() => uploadMut.mutate(false)}
-              disabled={!canSubmit || uploadMut.isPending}
+              onClick={() => submit(false)}
+              disabled={!canSubmit}
               className="flex-1 px-6 py-4 bg-card border-2 border-border text-foreground rounded-xl hover:bg-muted transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
             >
-              {uploadMut.isPending ? 'Saving…' : 'Save as Draft'}
+              Save as Draft
             </button>
           </div>
           <p className="text-xs text-muted-foreground text-center pt-1">

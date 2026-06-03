@@ -17,6 +17,7 @@ import { Skeleton } from '../../components/ui/skeleton'
 import { contentApi } from '../../api/content'
 import { engagementApi } from '../../api/engagement'
 import { commentsApi } from '../../api/comments'
+import { careerLabel } from '../../lib/careers'
 import { useAuth } from '../../hooks/useAuth'
 import { formatDistanceToNow } from 'date-fns'
 import type { Content } from '../../types'
@@ -259,14 +260,12 @@ export default function ContentDetail() {
             </div>
           </div>
 
-          {/* Tags */}
-          {content.hashtags && content.hashtags.length > 0 && (
+          {/* Career */}
+          {content.career && (
             <div className="flex flex-wrap gap-2 mb-6">
-              {content.hashtags.map((tag) => (
-                <Badge key={String(tag)} variant="secondary" className="bg-primary/10 text-primary border-0 px-3 py-1">
-                  #{tag}
-                </Badge>
-              ))}
+              <Badge variant="secondary" className="bg-primary/10 text-primary border-0 px-3 py-1">
+                {careerLabel(content.career)}
+              </Badge>
             </div>
           )}
 

@@ -4,6 +4,7 @@ import { Play, Headphones, FileText, Heart, MessageCircle, Plus, MoreVertical } 
 import { useQuery } from '@tanstack/react-query'
 import { Badge } from '../../components/ui/badge'
 import { Skeleton } from '../../components/ui/skeleton'
+import { careerLabel } from '../../lib/careers'
 import { teacherContentApi } from '../../api/teacherContent'
 import { formatDistanceToNow } from 'date-fns'
 import type { Content, ContentType } from '../../types'
@@ -154,17 +155,13 @@ export default function TeacherDashboard() {
                         </p>
                       </div>
                       <div className="space-y-3">
-                        <div className="flex flex-wrap gap-2">
-                          {item.hashtags?.slice(0, 3).map((tag) => (
-                            <Badge
-                              key={String(tag)}
-                              variant="secondary"
-                              className="text-xs bg-primary/10 text-primary border-0"
-                            >
-                              #{tag}
+                        {item.career && (
+                          <div className="flex flex-wrap gap-2">
+                            <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-0">
+                              {careerLabel(item.career)}
                             </Badge>
-                          ))}
-                        </div>
+                          </div>
+                        )}
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <Heart className="w-4 h-4" />

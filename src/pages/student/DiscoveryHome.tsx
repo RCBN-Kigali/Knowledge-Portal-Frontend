@@ -6,6 +6,7 @@ import { Badge } from '../../components/ui/badge'
 import { discoveryApi } from '../../api/discovery'
 import { announcementsApi } from '../../api/announcements'
 import { Skeleton } from '../../components/ui/skeleton'
+import { careerLabel } from '../../lib/careers'
 import type { Content, ContentType } from '../../types'
 
 const categoryStyle: Record<string, string> = {
@@ -214,17 +215,13 @@ export default function DiscoveryHome() {
                       </div>
 
                       <div className="space-y-2">
-                        <div className="flex flex-wrap gap-2">
-                          {item.hashtags?.slice(0, 3).map((tag) => (
-                            <Badge
-                              key={String(tag)}
-                              variant="secondary"
-                              className="text-xs bg-muted border-0"
-                            >
-                              #{tag}
+                        {item.career && (
+                          <div className="flex flex-wrap gap-2">
+                            <Badge variant="secondary" className="text-xs bg-muted border-0">
+                              {careerLabel(item.career)}
                             </Badge>
-                          ))}
-                        </div>
+                          </div>
+                        )}
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <div className="flex items-center gap-1">
                             <Heart className="w-4 h-4" />

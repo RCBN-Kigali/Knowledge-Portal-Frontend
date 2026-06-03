@@ -15,6 +15,7 @@ import { Badge } from '../../components/ui/badge'
 import { Skeleton } from '../../components/ui/skeleton'
 import { adminApi } from '../../api/admin'
 import { format } from 'date-fns'
+import { careerLabel } from '../../lib/careers'
 import type { Content, ContentType } from '../../types'
 
 function getContentIcon(type: ContentType) {
@@ -196,17 +197,11 @@ export default function ContentReview() {
             </span>
           </div>
 
-          {content.hashtags && content.hashtags.length > 0 && (
+          {content.career && (
             <div className="flex flex-wrap gap-2">
-              {content.hashtags.map((tag) => (
-                <Badge
-                  key={String(tag)}
-                  variant="secondary"
-                  className="bg-primary/10 text-primary border-0 px-3 py-1"
-                >
-                  #{tag}
-                </Badge>
-              ))}
+              <Badge variant="secondary" className="bg-primary/10 text-primary border-0 px-3 py-1">
+                {careerLabel(content.career)}
+              </Badge>
             </div>
           )}
         </div>

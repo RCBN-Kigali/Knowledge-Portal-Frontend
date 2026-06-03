@@ -56,8 +56,8 @@ describe('UploadContent', () => {
     await user.click(screen.getByText(/pick a subject/i).closest("button")!)
     await user.click(await screen.findByRole('option', { name: 'Math' }))
 
-    await user.click(screen.getByText(/pick a grade/i).closest("button")!)
-    await user.click(await screen.findByRole('option', { name: 'Junior Secondary 2' }))
+    await user.click(screen.getByText(/pick a level/i).closest("button")!)
+    await user.click(await screen.findByRole('option', { name: 'Intermediate' }))
 
     // Article body.
     const body = screen.getByPlaceholderText(/write your article content here/i)
@@ -74,7 +74,7 @@ describe('UploadContent', () => {
     // New workflow: 'Submit for Review' goes to 'pending', not 'published'.
     expect(created!.status).toBe('pending')
     expect(created!.subject).toBe('Math')
-    expect(created!.grade_level).toBe('Junior Secondary 2')
+    expect(created!.grade_level).toBe('Intermediate')
   })
 
   it('saves a draft via the Save as Draft button', async () => {
@@ -95,8 +95,8 @@ describe('UploadContent', () => {
     await user.click(screen.getByText(/pick a subject/i).closest("button")!)
     await user.click(await screen.findByRole('option', { name: 'Science' }))
 
-    await user.click(screen.getByText(/pick a grade/i).closest("button")!)
-    await user.click(await screen.findByRole('option', { name: 'Senior 4' }))
+    await user.click(screen.getByText(/pick a level/i).closest("button")!)
+    await user.click(await screen.findByRole('option', { name: 'Advanced' }))
 
     await user.type(screen.getByPlaceholderText(/write your article content here/i), 'WIP')
 
@@ -107,20 +107,34 @@ describe('UploadContent', () => {
     expect(created!.status).toBe('draft')
   })
 
-  it('manages hashtags as add/remove chips', async () => {
+  it('saves the chosen career with the content', async () => {
     const user = userEvent.setup()
-    renderWithProviders(<UploadContent />, { authAs: teacherAuth() })
 
-    const tagInput = screen.getByPlaceholderText(/type hashtag and press enter/i)
-    await user.type(tagInput, 'Algebra{Enter}')
-    await user.type(tagInput, 'Grade9{Enter}')
+    renderWithProviders(
+      <Routes>
+        <Route path="/teacher/upload" element={<UploadContent />} />
+        <Route path="/teacher/dashboard" element={<div>My Content</div>} />
+      </Routes>,
+      { authAs: teacherAuth(), initialEntries: ['/teacher/upload'] }
+    )
 
-    expect(screen.getByText('#Algebra')).toBeInTheDocument()
-    expect(screen.getByText('#Grade9')).toBeInTheDocument()
+    await user.type(screen.getByPlaceholderText(/enter content title/i), 'Career Article')
+    await user.click(screen.getByRole('heading', { name: 'Article' }).closest('button')!)
 
-    await user.click(screen.getByRole('button', { name: /remove algebra/i }))
+    await user.click(screen.getByText(/pick a subject/i).closest('button')!)
+    await user.click(await screen.findByRole('option', { name: 'Science' }))
 
-    expect(screen.queryByText('#Algebra')).not.toBeInTheDocument()
-    expect(screen.getByText('#Grade9')).toBeInTheDocument()
+    await user.click(screen.getByText(/pick a level/i).closest('button')!)
+    await user.click(await screen.findByRole('option', { name: 'Beginner' }))
+
+    await user.click(screen.getByText(/link this content to a career/i).closest('button')!)
+    await user.click(await screen.findByRole('option', { name: 'Technology & IT' }))
+
+    await user.type(screen.getByPlaceholderText(/write your article content here/i), 'Body')
+    await user.click(screen.getByRole('button', { name: /save as draft/i }))
+
+    await waitFor(() => expect(screen.getByText('My Content')).toBeInTheDocument())
+    const created = Array.from(state.contents.values()).find((c) => c.title === 'Career Article')
+    expect(created!.career).toBe('technology')
   })
 })

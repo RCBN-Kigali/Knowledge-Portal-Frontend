@@ -8,7 +8,7 @@ export interface TeacherContentUploadInput {
   subject: string
   grade_level: string
   duration_minutes?: number | null
-  hashtags?: string[]
+  career?: string | null
   external_links?: ExternalLink[]
   publish?: boolean
   file?: File | null
@@ -17,7 +17,7 @@ export interface TeacherContentUploadInput {
 export interface TeacherContentUpdateInput {
   title?: string
   description?: string
-  hashtags?: string[]
+  career?: string | null
   external_links?: ExternalLink[]
   // Teachers may transition content to 'draft' or 'pending'. Admin
   // endpoints handle 'published' and 'rejected'.
@@ -46,7 +46,7 @@ export const teacherContentApi = {
     fd.append('subject', input.subject)
     fd.append('grade_level', input.grade_level)
     if (input.duration_minutes != null) fd.append('duration_minutes', String(input.duration_minutes))
-    if (input.hashtags) fd.append('hashtags', input.hashtags.join(','))
+    if (input.career) fd.append('career', input.career)
     fd.append('external_links', JSON.stringify(input.external_links ?? []))
     fd.append('publish', String(input.publish ?? false))
     if (input.file) fd.append('file', input.file)

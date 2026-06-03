@@ -46,7 +46,7 @@ export interface Content {
   subject: string
   grade_level: string
   duration_minutes: number | null
-  hashtags: string[] | null
+  career: string | null
   external_links: ExternalLink[] | null
   status: ContentStatus
   views_count: number

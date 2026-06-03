@@ -20,16 +20,16 @@ describe('PendingApprovals (content review)', () => {
       title: 'Photosynthesis review me',
       status: 'pending',
       subject: 'Science',
-      grade_level: 'Grade 9',
-      hashtags: ['Biology'],
+      grade_level: 'Intermediate',
+      career: 'medicine',
     })
 
     renderWithProviders(<PendingApprovals />, { authAs: adminAuth() })
 
     expect(await screen.findByText('Photosynthesis review me')).toBeInTheDocument()
     expect(screen.getByText('Science')).toBeInTheDocument()
-    expect(screen.getByText('Grade 9')).toBeInTheDocument()
-    expect(screen.getByText('#Biology')).toBeInTheDocument()
+    expect(screen.getByText('Intermediate')).toBeInTheDocument()
+    expect(screen.getByText('Medicine & Healthcare')).toBeInTheDocument()
   })
 
   it('approves pending content and sets status to published', async () => {
