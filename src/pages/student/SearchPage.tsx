@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Search,
-  TrendingUp,
   Clock,
   X,
   Stethoscope,
@@ -93,18 +92,6 @@ export default function SearchPage() {
     queryFn: () => discoveryApi.search({ q: committed }),
     enabled: committed.length > 0,
   })
-
-  const trendingTopics = useMemo(() => {
-    const fromBackend = trending?.trending_searches.map((s) => `#${s.replace(/\s+/g, '')}`) ?? []
-    if (fromBackend.length >= 4) return fromBackend
-    // Fall back to design-canonical hashtags so the screen never feels empty.
-    return [
-      ...fromBackend,
-      '#Photosynthesis', '#Algebra', '#EssayWriting', '#ClimateChange',
-      '#AfricanHistory', '#ProgrammingBasics', '#Chemistry', '#CareerGuidance',
-      '#PublicSpeaking', '#FinancialLiteracy',
-    ].slice(0, 10)
-  }, [trending])
 
   const autoSuggestions = useMemo(() => {
     if (!searchQuery) return []
@@ -201,25 +188,6 @@ export default function SearchPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-8">
         {!isSearching ? (
           <>
-            {/* Trending Topics */}
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <TrendingUp className="w-5 h-5 text-primary" />
-                <h3 className="font-semibold text-lg">Trending Topics</h3>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {trendingTopics.map((topic) => (
-                  <button
-                    key={topic}
-                    onClick={() => submit(topic.replace(/^#/, ''))}
-                    className="px-5 py-3 bg-primary/10 text-primary border border-primary/20 rounded-full hover:bg-primary hover:text-primary-foreground transition-all active:scale-95"
-                  >
-                    {topic}
-                  </button>
-                ))}
-              </div>
-            </div>
-
             {/* Recent Searches */}
             {recent.length > 0 && (
               <div>
