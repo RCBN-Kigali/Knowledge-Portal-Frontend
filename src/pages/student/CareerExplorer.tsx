@@ -183,13 +183,15 @@ export default function CareerExplorer() {
   const items = isCareer ? (meta as typeof careerData.medicine).pathways : (meta as typeof subjectData.science).topics
   const Icon = meta.icon
 
-  // Backend filters by exact `subject`; careers share the 'Career' category.
-  // subjectId already carries the canonical stored value from the subject card.
-  const filterSubject = isCareer ? 'Career' : subjectId ?? 'Science'
+  // Career view filters by the content's career label; subject view filters by
+  // the canonical subject value already carried in the URL.
+  const exploreParams = isCareer
+    ? { career: careerId ?? '' }
+    : { subject: subjectId ?? 'Science' }
 
   const { data: feed, isLoading } = useQuery({
-    queryKey: ['explore', filterSubject],
-    queryFn: () => discoveryApi.explore({ subject: filterSubject, limit: 20 }),
+    queryKey: ['explore', exploreParams],
+    queryFn: () => discoveryApi.explore({ ...exploreParams, limit: 20 }),
   })
 
   return (
